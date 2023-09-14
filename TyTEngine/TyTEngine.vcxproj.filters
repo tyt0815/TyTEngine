@@ -22,6 +22,15 @@
     <Filter Include="Common\Private">
       <UniqueIdentifier>{7f1cbed4-f600-494a-bc78-2d244e9e02fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="InitDirect3D">
+      <UniqueIdentifier>{f2ff98dd-d414-4e59-955e-486ba47a95c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InitDirect3D\Public">
+      <UniqueIdentifier>{8b955508-1af3-4eaa-bfe4-c3878f58c3d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InitDirect3D\Private">
+      <UniqueIdentifier>{7c592225-8876-48a7-af92-f5ce950d7a4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -30,6 +39,12 @@
     <ClCompile Include="D3DApp.cpp">
       <Filter>Common\Private</Filter>
     </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Common\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="InitDirect3DApp.cpp">
+      <Filter>InitDirect3D\Private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3DUtil.h">
@@ -37,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="D3DApp.h">
       <Filter>Common\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Common\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="InitDirect3DApp.h">
+      <Filter>InitDirect3D\Public</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
