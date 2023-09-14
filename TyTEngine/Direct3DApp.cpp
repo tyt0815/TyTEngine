@@ -1,12 +1,12 @@
-#include "D3DApp.h"
-#include "D3DUtil.h"
+#include "pch.h"
+#include "Direct3DApp.h"
 #include <sstream>
 #include <vector>
 
 
 namespace
 {
-	D3DApp* gD3DApp = nullptr;
+	CDirect3DApp* gD3DApp = nullptr;
 }
 
 LRESULT CALLBACK MainWndProc(HWND HWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
@@ -14,7 +14,7 @@ LRESULT CALLBACK MainWndProc(HWND HWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
 	return gD3DApp->WndProc(HWnd, Msg, WParam, LParam);
 }
 
-D3DApp::D3DApp(HINSTANCE HInstance, int CmdShow) :
+CDirect3DApp::CDirect3DApp(HINSTANCE HInstance, int CmdShow) :
 	mAppTitle(L"TyTEngine"),
 	mWindowClass(L"TyT"),
 	mhInst(HInstance),
@@ -37,12 +37,12 @@ D3DApp::D3DApp(HINSTANCE HInstance, int CmdShow) :
 	mMinimized(false),
 	mMaximized(false),
 	mResizing(false),
-	mTimer(new GameTimer)
+	mTimer(new CGameTimer)
 {
 	gD3DApp = this;
 }
 
-D3DApp::~D3DApp()
+CDirect3DApp::~CDirect3DApp()
 {
 	ReleaseCOM(mRenderTargetView);
 	ReleaseCOM(mDepthStencilView);
@@ -58,7 +58,7 @@ D3DApp::~D3DApp()
 	delete mTimer;
 }
 
-bool D3DApp::Init()
+bool CDirect3DApp::Init()
 {
 	if (!InitMainWindow())
 	{
@@ -73,7 +73,7 @@ bool D3DApp::Init()
 	return true;
 }
 
-int D3DApp::Run()
+int CDirect3DApp::Run()
 {
 	MSG msg = { 0 };
 
@@ -86,25 +86,14 @@ int D3DApp::Run()
 		}
 		else
 		{
-			mTimer->Tick();
-
-			if (!mAppPaused)
-			{
-				CalculateFrameStats();
-				UpdateScene(mTimer->DeltaTime());
-				DrawScene();
-			}
-			else
-			{
-				Sleep(100);
-			}
+			Process();
 		}
 	}
 
 	return (int)msg.wParam;
 }
 
-LRESULT D3DApp::WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CDirect3DApp::WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (Msg)
 	{
@@ -258,7 +247,7 @@ LRESULT D3DApp::WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-bool D3DApp::InitMainWindow()
+bool CDirect3DApp::InitMainWindow()
 {
 	AppRegisterClass();
 
@@ -273,7 +262,7 @@ bool D3DApp::InitMainWindow()
 
 }
 
-bool D3DApp::InitDirect3D()
+bool CDirect3DApp::InitDirect3D()
 {
 	UINT CreateDeviceFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)
@@ -411,7 +400,7 @@ bool D3DApp::InitDirect3D()
 	return true;
 }
 
-void D3DApp::OnResize()
+void CDirect3DApp::OnResize()
 {
 	assert(mD3DImmediateContext);
 	assert(mD3DDevice);
@@ -475,7 +464,7 @@ void D3DApp::OnResize()
 	mD3DImmediateContext->RSSetViewports(1, mScreenViewport);
 }
 
-void D3DApp::CalculateFrameStats()
+void CDirect3DApp::CalculateFrameStats()
 {
 	// FPS 계산
 	static int FrameCnt = 0;
@@ -498,7 +487,7 @@ void D3DApp::CalculateFrameStats()
 	}
 }
 
-ATOM D3DApp::AppRegisterClass()
+ATOM CDirect3DApp::AppRegisterClass()
 {
 	WNDCLASSEXW wcex;
 
@@ -519,7 +508,7 @@ ATOM D3DApp::AppRegisterClass()
 	return RegisterClassExW(&wcex); // 윈도우가 제공하는 함수.
 }
 
-BOOL D3DApp::InitInstance()
+BOOL CDirect3DApp::InitInstance()
 {
 	RECT R = { 0, 0, mClientWidth, mClientHeight };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
@@ -538,4 +527,20 @@ BOOL D3DApp::InitInstance()
 	UpdateWindow(mhMainWnd);
 
 	return TRUE;
+}
+
+void CDirect3DApp::Process()
+{
+	mTimer->Tick();
+
+	if (!mAppPaused)
+	{
+		CalculateFrameStats();
+		UpdateScene(mTimer->DeltaTime());
+		DrawScene();
+	}
+	else
+	{
+		Sleep(100);
+	}
 }

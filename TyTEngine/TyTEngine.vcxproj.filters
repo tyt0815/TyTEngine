@@ -13,51 +13,48 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{d919ad5c-7fb2-44f3-b053-90d5754b7e30}</UniqueIdentifier>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{11e2d4c9-388f-4155-99a6-b6b4e870328b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Public">
-      <UniqueIdentifier>{098f6ac2-6046-4c06-a4cd-3e733090f666}</UniqueIdentifier>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{f82948c7-b46e-484d-b85b-0cf8996d3080}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Private">
-      <UniqueIdentifier>{7f1cbed4-f600-494a-bc78-2d244e9e02fe}</UniqueIdentifier>
+    <Filter Include="Engine\Core\Public">
+      <UniqueIdentifier>{4759ab65-daba-4960-beaa-25c0a74f635a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="InitDirect3D">
-      <UniqueIdentifier>{f2ff98dd-d414-4e59-955e-486ba47a95c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="InitDirect3D\Public">
-      <UniqueIdentifier>{8b955508-1af3-4eaa-bfe4-c3878f58c3d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="InitDirect3D\Private">
-      <UniqueIdentifier>{7c592225-8876-48a7-af92-f5ce950d7a4d}</UniqueIdentifier>
+    <Filter Include="Engine\Core\Private">
+      <UniqueIdentifier>{498d51d5-a876-4d80-b7bb-c7a252b5eea4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="D3DApp.cpp">
-      <Filter>Common\Private</Filter>
+    <ClCompile Include="Direct3DApp.cpp">
+      <Filter>Engine\Core\Private</Filter>
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
-      <Filter>Common\Private</Filter>
+      <Filter>Engine\Core\Private</Filter>
     </ClCompile>
-    <ClCompile Include="InitDirect3DApp.cpp">
-      <Filter>InitDirect3D\Private</Filter>
+    <ClCompile Include="Core.cpp">
+      <Filter>Engine\Core\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D3DUtil.h">
-      <Filter>Common\Public</Filter>
+    <ClInclude Include="pch.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="D3DApp.h">
-      <Filter>Common\Public</Filter>
+    <ClInclude Include="DirectXUtil.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Direct3DApp.h">
+      <Filter>Engine\Core\Public</Filter>
     </ClInclude>
     <ClInclude Include="GameTimer.h">
-      <Filter>Common\Public</Filter>
+      <Filter>Engine\Core\Public</Filter>
     </ClInclude>
-    <ClInclude Include="InitDirect3DApp.h">
-      <Filter>InitDirect3D\Public</Filter>
+    <ClInclude Include="Core.h">
+      <Filter>Engine\Core\Public</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

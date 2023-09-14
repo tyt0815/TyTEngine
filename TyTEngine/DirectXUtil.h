@@ -1,19 +1,8 @@
 #pragma once
 
-#ifndef D3DUTIL_H
-#define D3DUTIL_H
-
-#define WIN32_LEAN_AND_MEAN     // 거의 사용되지 않는 windows.h를 제거함.
-#include <windows.h>
-#include <cassert>
-#include <d3d11.h>
-#include <dxgi.h>
-#include <d3dcommon.h>
-#include <DirectXMath.h>
-#include <strsafe.h>
-#include "GameTimer.h"
-
 using namespace DirectX;
+
+#include "GameTimer.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
     #ifndef HR
@@ -77,6 +66,4 @@ static void _PrintDebugString(const char* format, ...) {
     va_end(vaList);
     OutputDebugStringA(buf);
 }
-#endif
-
 #endif

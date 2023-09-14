@@ -1,12 +1,9 @@
 #pragma once
 
-#ifndef GAMETIMER_H
-#define GAMETIMER_H
-
-class GameTimer
+class CGameTimer
 {
 public:
-	GameTimer();
+	CGameTimer();
 
 	float TotalTime()const;
 	float DeltaTime()const;
@@ -28,5 +25,3 @@ private:
 
 	bool mStopped;
 };
-
-#endif // !GAMETIMER_H

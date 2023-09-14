@@ -104,6 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,16 +129,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="D3DApp.cpp" />
+    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="Direct3DApp.cpp" />
     <ClCompile Include="GameTimer.cpp" />
-    <ClCompile Include="InitDirect3DApp.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D3DApp.h" />
-    <ClInclude Include="D3DUtil.h" />
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="Direct3DApp.h" />
     <ClInclude Include="GameTimer.h" />
-    <ClInclude Include="InitDirect3DApp.h" />
+    <ClInclude Include="DirectXUtil.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef D3DAPP_H
-#define D3DAPP_H
-
 #include <SDKDDKVer.h>
 #include <Windows.h>
 #include <d3dcommon.h>
@@ -17,13 +14,13 @@ struct ID3D11DepthStencilView;
 struct ID3D11Texture2D;
 struct D3D11_VIEWPORT;
 
-class GameTimer;
+class CGameTimer;
 
-class D3DApp
+class CDirect3DApp
 {
 public:
-	D3DApp(HINSTANCE HInstance, int CmdShow);
-	~D3DApp();
+	CDirect3DApp(HINSTANCE HInstance, int CmdShow);
+	~CDirect3DApp();
 	virtual bool Init();
 	int Run();
 
@@ -36,13 +33,14 @@ protected:
 	void CalculateFrameStats();
 	virtual ATOM AppRegisterClass();
 	virtual BOOL InitInstance();
-	virtual void UpdateScene(float dt) = 0; // = 0 은 순수 가상함수. 자식 클래스에서 구현
+	virtual void Process();
+	virtual void UpdateScene(float DeltaTime) = 0; // = 0 은 순수 가상함수. 자식 클래스에서 구현
 	virtual void DrawScene() = 0;			// 자식 클래스에서 구현
 	virtual void OnMouseDown(WPARAM btnState, int x, int y) { }	// 자식 클래스에서 구현
 	virtual void OnMouseUp(WPARAM btnState, int x, int y) { }	// 자식 클래스에서 구현
 	virtual void OnMouseMove(WPARAM btnState, int x, int y) { }	// 자식 클래스에서 구현
 
-	GameTimer *mTimer;
+	CGameTimer *mTimer;
 
 	/*
 	* Win32
@@ -74,5 +72,3 @@ protected:
 	ID3D11Texture2D* mDepthStencilBuffer;
 	D3D11_VIEWPORT* mScreenViewport;
 };
-
-#endif

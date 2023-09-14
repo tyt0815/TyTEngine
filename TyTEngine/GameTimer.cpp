@@ -1,7 +1,8 @@
+#include "pch.h"
 #include "GameTimer.h"
 #include <Windows.h>
 
-GameTimer::GameTimer():
+CGameTimer::CGameTimer():
 	mSecondsPerCount(0.f),
 	mDeltaTime(-1.f),
 	mBaseTime(0),
@@ -16,7 +17,7 @@ GameTimer::GameTimer():
 	mSecondsPerCount = 1.0 / (double)CountsPerSec;
 }
 
-float GameTimer::TotalTime() const
+float CGameTimer::TotalTime() const
 {
 	if (mStopped)
 	{
@@ -28,12 +29,12 @@ float GameTimer::TotalTime() const
 	}
 }
 
-float GameTimer::DeltaTime() const
+float CGameTimer::DeltaTime() const
 {
 	return (float)mDeltaTime;
 }
 
-void GameTimer::Reset()
+void CGameTimer::Reset()
 {
 	__int64 CurrTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&CurrTime);
@@ -43,7 +44,7 @@ void GameTimer::Reset()
 	mStopped = false;
 }
 
-void GameTimer::Start()
+void CGameTimer::Start()
 {
 	__int64 StartTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&StartTime);
@@ -57,7 +58,7 @@ void GameTimer::Start()
 	}
 }
 
-void GameTimer::Stop()
+void CGameTimer::Stop()
 {
 	if (!mStopped)
 	{
@@ -68,7 +69,7 @@ void GameTimer::Stop()
 	}
 }
 
-void GameTimer::Tick()
+void CGameTimer::Tick()
 {
 	if (mStopped)
 	{

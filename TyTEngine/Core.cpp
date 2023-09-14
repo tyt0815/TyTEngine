@@ -1,34 +1,34 @@
-#include "InitDirect3DApp.h"
-#include "D3DUtil.h"
+#include "pch.h"
+#include "Core.h"
 
-InitDirect3DApp::InitDirect3DApp(HINSTANCE hInstance, int CmdShow):
-	D3DApp(hInstance, CmdShow)
+CCore::CCore(HINSTANCE hInstance, int CmdShow):
+	CDirect3DApp(hInstance, CmdShow)
 {
 }
 
-InitDirect3DApp::~InitDirect3DApp()
+CCore::~CCore()
 {
 }
 
-bool InitDirect3DApp::Init()
+bool CCore::Init()
 {
-	if (!D3DApp::Init())
+	if (!CDirect3DApp::Init())
 	{
 		return false;
 	}
 	return true;
 }
 
-void InitDirect3DApp::OnResize()
+void CCore::OnResize()
 {
-	D3DApp::OnResize();
+	CDirect3DApp::OnResize();
 }
 
-void InitDirect3DApp::UpdateScene(float dt)
+void CCore::UpdateScene(float DeltaTime)
 {
 }
 
-void InitDirect3DApp::DrawScene()
+void CCore::DrawScene()
 {
 	assert(mD3DImmediateContext);
 	assert(mSwapChain);

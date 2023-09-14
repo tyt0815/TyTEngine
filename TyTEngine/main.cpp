@@ -1,42 +1,27 @@
-#include "D3DApp.h"
-#include "InitDirect3DApp.h"
+#include "pch.h"
+#include "Core.h"
 #include <crtdbg.h>
 #include <iostream>
 
 #pragma comment(lib, "d3d11.lib")
 
-enum class EChapter
-{
-	ECInitDirect3D
-};
-EChapter Chapter = EChapter::ECInitDirect3D;
 
-int InitDirect3D(HINSTANCE HInstance, int CmdShow);
-
-int WINAPI WinMain(	_In_ HINSTANCE HInstance, 
-					_In_opt_ HINSTANCE HPrevInstance,
+int WINAPI WinMain(	_In_ HINSTANCE hInstance, 
+					_In_opt_ HINSTANCE hPrevInstance,
 					_In_ PSTR CmdLine,
 					_In_ int CmdShow)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-	switch (Chapter)
+	
+	CCore TyTEngine(hInstance, CmdShow);
+
+	if (!TyTEngine.Init())
 	{
-	case EChapter::ECInitDirect3D:
-		InitDirect3D(HInstance, CmdShow);
-		break;
-	default:
-		break;
-	}
-	return 0;
-}
-
-int InitDirect3D(HINSTANCE HInstance, int CmdShow)
-{
-	InitDirect3DApp TheApp(HInstance, CmdShow);
-
-	if (!TheApp.Init())
+		OutputDebugString(L"엔진 초기화 실패");
 		return 0;
-	return  TheApp.Run();
+	}
+
+	return TyTEngine.Run();
 }
