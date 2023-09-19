@@ -25,6 +25,18 @@
     <Filter Include="Engine\Core\Private">
       <UniqueIdentifier>{498d51d5-a876-4d80-b7bb-c7a252b5eea4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Utility">
+      <UniqueIdentifier>{f9717584-f771-4a81-bda4-0b930b64f5e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Utility\Public">
+      <UniqueIdentifier>{713ea3fd-7d1d-445d-8045-61232f3ea612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Utility\Private">
+      <UniqueIdentifier>{510b8eee-f0a2-4805-8281-a83c81a1b015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{fd0e7dee-09e9-4f18-ad6b-e3eb8d9e9eb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -39,12 +51,12 @@
     <ClCompile Include="Core.cpp">
       <Filter>Engine\Core\Private</Filter>
     </ClCompile>
+    <ClCompile Include="MathHelper.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXUtil.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Direct3DApp.h">
@@ -56,5 +68,19 @@
     <ClInclude Include="Core.h">
       <Filter>Engine\Core\Public</Filter>
     </ClInclude>
+    <ClInclude Include="DirectXUtil.h">
+      <Filter>Engine\Utility\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>Engine\Utility\Public</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

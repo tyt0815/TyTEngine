@@ -4,8 +4,11 @@
 #include <windows.h>
 #include <cassert>
 #include <d3d11.h>
-#include <dxgi.h>
 #include <d3dcommon.h>
+#include <d3dcompiler.h>
+#include <dxgi.h>
 #include <DirectXMath.h>
 #include <strsafe.h>
+
 #include "DirectXUtil.h"
+#include "MathHelper.h"

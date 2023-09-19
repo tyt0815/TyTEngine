@@ -20,8 +20,8 @@ CDirect3DApp::CDirect3DApp(HINSTANCE HInstance, int CmdShow) :
 	mhInst(HInstance),
 	mCmdShow(CmdShow),
 	mD3DDriverType(D3D_DRIVER_TYPE_HARDWARE),
-	mClientWidth(400),
-	mClientHeight(400),
+	mClientWidth(1920),
+	mClientHeight(1080),
 	mSampleCount(4),
 	mEnable4xMsaa(false),
 	mhMainWnd(0),
@@ -485,6 +485,11 @@ void CDirect3DApp::CalculateFrameStats()
 		FrameCnt = 0;
 		TimeElapsed += 1.f;
 	}
+}
+
+float CDirect3DApp::GetAspectRatio()
+{
+	return static_cast<float>(mClientWidth) / mClientHeight;
 }
 
 ATOM CDirect3DApp::AppRegisterClass()

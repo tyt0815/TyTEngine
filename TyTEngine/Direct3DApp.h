@@ -31,6 +31,7 @@ protected:
 	bool InitDirect3D();
 	void OnResize();
 	void CalculateFrameStats();
+	float GetAspectRatio();
 	virtual ATOM AppRegisterClass();
 	virtual BOOL InitInstance();
 	virtual void Process();

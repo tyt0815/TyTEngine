@@ -4,7 +4,7 @@
 #include <iostream>
 
 #pragma comment(lib, "d3d11.lib")
-
+#pragma comment(lib ,"D3DCompiler.lib")
 
 int WINAPI WinMain(	_In_ HINSTANCE hInstance, 
 					_In_opt_ HINSTANCE hPrevInstance,
