@@ -1,20 +1,25 @@
-struct VS_Input
+cbuffer Constants : register(b0)
 {
-    float2 pos : POSITION;
-    float4 color : COLOR;
+	float4x4 gWorldViewProj;
 };
 
-struct VS_Output
+struct VertexIn
 {
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
+	float3 PosL : POSITION;
+	float4 Color : COLOR;
 };
 
-VS_Output vs_main(VS_Input input)
+struct VertexOut
 {
-    VS_Output output;
-    output.position = float4(input.pos, 0.0f, 1.0f);
-    output.color = input.color;
+	float4 PosH : SV_POSITION;
+	float4 Color : COLOR;
+};
 
-    return output;
+VertexOut VSMain(VertexIn VIn)
+{
+	VertexOut VOut;
+	//VOut.PosH = float4(VIn.PosL, 1.f);
+	VOut.PosH = mul(float4(VIn.PosL, 1.f), gWorldViewProj);
+	VOut.Color = VIn.Color;
+	return VOut;
 }

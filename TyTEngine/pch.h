@@ -12,3 +12,4 @@
 
 #include "DirectXUtil.h"
 #include "MathHelper.h"
+#include "CommonUtility.h"

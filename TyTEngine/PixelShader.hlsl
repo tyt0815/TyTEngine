@@ -1,10 +1,10 @@
-struct VS_Output
+struct VertexOut
 {
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
+	float4 PosH : SV_POSITION;
+	float4 Color : COLOR;
 };
 
-float4 ps_main(VS_Output input) : SV_TARGET
+float4 PSMain(VertexOut VOut) : SV_TARGET
 {
-    return input.color;
+	return VOut.Color;
 }

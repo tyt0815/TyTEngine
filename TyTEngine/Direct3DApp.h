@@ -29,7 +29,7 @@ public:
 protected:
 	bool InitMainWindow();
 	bool InitDirect3D();
-	void OnResize();
+	virtual void OnResize();
 	void CalculateFrameStats();
 	float GetAspectRatio();
 	virtual ATOM AppRegisterClass();
