@@ -19,9 +19,9 @@ class CGameTimer;
 class CDirect3DApp
 {
 public:
-	CDirect3DApp(HINSTANCE HInstance, int CmdShow);
+	CDirect3DApp();
 	~CDirect3DApp();
-	virtual bool Init();
+	virtual bool Init(HINSTANCE HInstance, int CmdShow);
 	int Run();
 
 	virtual LRESULT WndProc(HWND HWnd, UINT Msg, WPARAM WParam, LPARAM LParam);

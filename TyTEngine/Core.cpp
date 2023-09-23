@@ -3,13 +3,10 @@
 #include "ObjectManager.h"
 #include "Object.h"
 
-CCore::CCore(HINSTANCE hInstance, int CmdShow):
-	CDirect3DApp(hInstance, CmdShow),
+CCore::CCore():
+	CDirect3DApp(),
 	mLastMousePos({0, 0}),
-	mRectangleVertexBuffers(0),
-	mRectangleIndexBuffers(0),
 	mWVPBuffer(0),
-	mNumRectangleIndex(0),
 	mVSBlob(0),
 	mPSBlob(0),
 	mVertexShader(0),
@@ -20,17 +17,13 @@ CCore::CCore(HINSTANCE hInstance, int CmdShow):
 	mPhi(0.25f * UMathHelper::PI)
 {
 	XMMATRIX I = XMMatrixIdentity();
-	XMStoreFloat4x4(&mWorldMat, I);
 	XMStoreFloat4x4(&mViewMat, I);
 	XMStoreFloat4x4(&mProjMat, I);
-	mWVPMat = I;
 }
 
 CCore::~CCore()
 {
 	ReleaseCOM(mInputLayout);
-	ReleaseCOM(mRectangleVertexBuffers);
-	ReleaseCOM(mRectangleIndexBuffers);
 	ReleaseCOM(mVSBlob);
 	ReleaseCOM(mPSBlob);
 	ReleaseCOM(mVertexShader);
@@ -38,9 +31,9 @@ CCore::~CCore()
 	ReleaseCOM(mWVPBuffer);
 }
 
-bool CCore::Init()
+bool CCore::Init(HINSTANCE hInstance, int CmdShow)
 {
-	if (!CDirect3DApp::Init())
+	if (!CDirect3DApp::Init(hInstance, CmdShow))
 	{
 		return false;
 	}
@@ -83,17 +76,6 @@ void CCore::DrawScene()
 {
 	assert(mD3DImmediateContext);
 	assert(mSwapChain);
-	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	mD3DImmediateContext->Map(mWVPBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-	XMMATRIX WorldMat = XMLoadFloat4x4(&mWorldMat);
-	XMMATRIX ViewMat = XMLoadFloat4x4(&mViewMat);
-	XMMATRIX ProjMat = XMLoadFloat4x4(&mProjMat);
-	XMMATRIX* WVPMat = (XMMATRIX*)mappedSubresource.pData;
-	*WVPMat = XMMatrixTranspose(WorldMat * ViewMat * ProjMat);
-
-	mD3DImmediateContext->Unmap(mWVPBuffer, 0);
-
-	mD3DImmediateContext->VSSetConstantBuffers(0, 1, &mWVPBuffer);
 
 	mD3DImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Cyan));
 	mD3DImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D10_CLEAR_STENCIL, 1.0f, 0);
@@ -102,13 +84,26 @@ void CCore::DrawScene()
 	mD3DImmediateContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	UINT Stride = sizeof(Vertex);
 	UINT Offset = 0;
-	mD3DImmediateContext->IASetVertexBuffers(0, 1, &mRectangleVertexBuffers, &Stride, &Offset);
-	mD3DImmediateContext->IASetIndexBuffer(mRectangleIndexBuffers, DXGI_FORMAT_R32_UINT, 0);
-
 	mD3DImmediateContext->VSSetShader(mVertexShader, nullptr, 0);
 	mD3DImmediateContext->PSSetShader(mPixelShader, nullptr, 0);
+	vector<OObject*> Objects = CObjectManager::GetInstance()->mObjects;
+	vector<OObject*>::iterator ObjectIter = Objects.begin();
+	for (; ObjectIter != Objects.end(); ++ObjectIter)
+	{
+		D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+		mD3DImmediateContext->Map(mWVPBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+		XMMATRIX WorldMat = (*ObjectIter)->GetWorldMatrix();
+		XMMATRIX ViewMat = XMLoadFloat4x4(&mViewMat);
+		XMMATRIX ProjMat = XMLoadFloat4x4(&mProjMat);
+		XMMATRIX* WVPMat = (XMMATRIX*)mappedSubresource.pData;
+		*WVPMat = XMMatrixTranspose(WorldMat * ViewMat * ProjMat);
+		mD3DImmediateContext->Unmap(mWVPBuffer, 0);
+		mD3DImmediateContext->VSSetConstantBuffers(0, 1, &mWVPBuffer);
 
-	mD3DImmediateContext->DrawIndexed(mNumRectangleIndex, 0, 0);
+		mD3DImmediateContext->IASetVertexBuffers(0, 1, &((*ObjectIter)->mVertexBuffer), &Stride, &Offset);
+		mD3DImmediateContext->IASetIndexBuffer((*ObjectIter)->mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		mD3DImmediateContext->DrawIndexed((*ObjectIter)->mNumIndex, 0, 0);
+	}
 
 	HR(mSwapChain->Present(0, 0));
 }
@@ -146,62 +141,13 @@ void CCore::OnMouseMove(WPARAM BtnState, int x, int y)
 	mLastMousePos.y = y;
 }
 
+HRESULT CCore::CreateD3D11Buffer(D3D11_BUFFER_DESC* BufferDesc, D3D11_SUBRESOURCE_DATA* InitData, ID3D11Buffer** Buffer)
+{
+	return mD3DDevice->CreateBuffer(BufferDesc, InitData, Buffer);
+}
+
 void CCore::BuildGeometryBuffers()
 {
-	Vertex Vertices[] = {
-		{ XMFLOAT3(-1.f, -1.f, -1.f), XMFLOAT4((const float*)(&Colors::White))	},
-		{ XMFLOAT3(-1.f, +1.f, -1.f), XMFLOAT4((const float*)(&Colors::Black))   },
-		{ XMFLOAT3(+1.f, +1.f, -1.f), XMFLOAT4((const float*)(&Colors::Red))   },
-		{ XMFLOAT3(+1.f, -1.f, -1.f), XMFLOAT4((const float*)(&Colors::Green))  },
-		{ XMFLOAT3(-1.f, -1.f, +1.f), XMFLOAT4((const float*)(&Colors::Blue)) },
-		{ XMFLOAT3(-1.f, +1.f, +1.f), XMFLOAT4((const float*)(&Colors::Yellow)) },
-		{ XMFLOAT3(+1.f, +1.f, +1.f), XMFLOAT4((const float*)(&Colors::Cyan)) },
-		{ XMFLOAT3(+1.f, -1.f, +1.f), XMFLOAT4((const float*)(&Colors::Magenta)) }
-	};
-	
-	D3D11_BUFFER_DESC vbd;
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertices);
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = 0;
-	vbd.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA vInitData;
-	vInitData.pSysMem = Vertices;
-	HR(mD3DDevice->CreateBuffer(&vbd, &vInitData, &mRectangleVertexBuffers));
-
-	UINT Indices[] = {
-		// front face
-		0, 1, 2,
-		0, 2, 3,
-		// back face
-		4, 6, 5,
-		4, 7, 6,
-		// left face
-		4, 5, 1,
-		4, 1, 0,
-		// right face
-		3, 2, 6,
-		3, 6, 7,
-		// top face
-		1, 5, 6,
-		1, 6, 2,
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
-
-	D3D11_BUFFER_DESC ibd;
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(Indices);
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	ibd.MiscFlags = 0;
-	ibd.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA iInitData;
-	iInitData.pSysMem = Indices;
-	mNumRectangleIndex = ARRAYSIZE(Indices);
-	HR(mD3DDevice->CreateBuffer(&ibd, &iInitData, &mRectangleIndexBuffers));
 }
 
 void CCore::BuildMat()

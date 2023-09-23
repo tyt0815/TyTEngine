@@ -14,11 +14,11 @@ LRESULT CALLBACK MainWndProc(HWND HWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
 	return gD3DApp->WndProc(HWnd, Msg, WParam, LParam);
 }
 
-CDirect3DApp::CDirect3DApp(HINSTANCE HInstance, int CmdShow) :
+CDirect3DApp::CDirect3DApp() :
 	mAppTitle(L"TyTEngine"),
 	mWindowClass(L"TyT"),
-	mhInst(HInstance),
-	mCmdShow(CmdShow),
+	mhInst(0),
+	mCmdShow(0),
 	mD3DDriverType(D3D_DRIVER_TYPE_HARDWARE),
 	mClientWidth(600),
 	mClientHeight(600),
@@ -58,8 +58,10 @@ CDirect3DApp::~CDirect3DApp()
 	delete mTimer;
 }
 
-bool CDirect3DApp::Init()
+bool CDirect3DApp::Init(HINSTANCE HInstance, int CmdShow)
 {
+	mhInst = HInstance;
+	mCmdShow = CmdShow;
 	if (!InitMainWindow())
 	{
 		return false;
