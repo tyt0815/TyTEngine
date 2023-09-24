@@ -20,7 +20,6 @@ public:
 private:
 	CCore();
 	~CCore();
-	void BuildGeometryBuffers();
 	void BuildMat();
 	void BuildShader();
 	void BuildVertexLayout();

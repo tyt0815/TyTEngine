@@ -12,4 +12,6 @@ private:
 	CObjectManager();
 	~CObjectManager();
 
+	void CreateCubeObject(XMFLOAT3 Scale, XMFLOAT3 Rotation, XMFLOAT3 Location, const XMVECTORF32 Color);
+
 };

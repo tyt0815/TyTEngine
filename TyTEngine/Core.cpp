@@ -37,8 +37,6 @@ bool CCore::Init(HINSTANCE hInstance, int CmdShow)
 	{
 		return false;
 	}
-
-	BuildGeometryBuffers();
 	BuildShader();
 	BuildVertexLayout();
 	BuildMat();
@@ -77,7 +75,7 @@ void CCore::DrawScene()
 	assert(md3dDeviceContext);
 	assert(mSwapChain);
 
-	md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Cyan));
+	md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::White));
 	md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D10_CLEAR_STENCIL, 1.0f, 0);
 
 	md3dDeviceContext->IASetInputLayout(mInputLayout);
@@ -144,10 +142,6 @@ void CCore::OnMouseMove(WPARAM BtnState, int x, int y)
 HRESULT CCore::CreateD3D11Buffer(D3D11_BUFFER_DESC* BufferDesc, D3D11_SUBRESOURCE_DATA* InitData, ID3D11Buffer** Buffer)
 {
 	return md3dDevice->CreateBuffer(BufferDesc, InitData, Buffer);
-}
-
-void CCore::BuildGeometryBuffers()
-{
 }
 
 void CCore::BuildMat()

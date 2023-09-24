@@ -5,15 +5,26 @@
 
 CObjectManager::CObjectManager()
 {
+	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { 2,0,0 }, Colors::Blue);
+	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { -2,0,0 }, Colors::Red);
+}
+
+CObjectManager::~CObjectManager()
+{
+	mObjects.clear();
+}
+
+void CObjectManager::CreateCubeObject(XMFLOAT3 Scale = { 1, 1, 1 }, XMFLOAT3 Rotation = { 0, 0, 0 }, XMFLOAT3 Location = { 0, 0, 0 }, const XMVECTORF32 Color = Colors::Red)
+{
 	Vertex CubeVertex[] = {
-		{ XMFLOAT3(-1.f, -1.f, -1.f), XMFLOAT4((const float*)(&Colors::White))	},
-		{ XMFLOAT3(-1.f, +1.f, -1.f), XMFLOAT4((const float*)(&Colors::Black))   },
-		{ XMFLOAT3(+1.f, +1.f, -1.f), XMFLOAT4((const float*)(&Colors::Red))   },
-		{ XMFLOAT3(+1.f, -1.f, -1.f), XMFLOAT4((const float*)(&Colors::Green))  },
-		{ XMFLOAT3(-1.f, -1.f, +1.f), XMFLOAT4((const float*)(&Colors::Blue)) },
-		{ XMFLOAT3(-1.f, +1.f, +1.f), XMFLOAT4((const float*)(&Colors::Yellow)) },
-		{ XMFLOAT3(+1.f, +1.f, +1.f), XMFLOAT4((const float*)(&Colors::Cyan)) },
-		{ XMFLOAT3(+1.f, -1.f, +1.f), XMFLOAT4((const float*)(&Colors::Magenta)) }
+		{ XMFLOAT3(-1.f, -1.f, -1.f), XMFLOAT4((const float*)(&Color))	},
+		{ XMFLOAT3(-1.f, +1.f, -1.f), XMFLOAT4((const float*)(&Color))   },
+		{ XMFLOAT3(+1.f, +1.f, -1.f), XMFLOAT4((const float*)(&Color))   },
+		{ XMFLOAT3(+1.f, -1.f, -1.f), XMFLOAT4((const float*)(&Color))  },
+		{ XMFLOAT3(-1.f, -1.f, +1.f), XMFLOAT4((const float*)(&Color)) },
+		{ XMFLOAT3(-1.f, +1.f, +1.f), XMFLOAT4((const float*)(&Color)) },
+		{ XMFLOAT3(+1.f, +1.f, +1.f), XMFLOAT4((const float*)(&Color)) },
+		{ XMFLOAT3(+1.f, -1.f, +1.f), XMFLOAT4((const float*)(&Color)) }
 	};
 	UINT CubeIndex[] = {
 		// front face
@@ -35,17 +46,8 @@ CObjectManager::CObjectManager()
 		4, 0, 3,
 		4, 3, 7
 	};
-
-	//unique_ptr<OObject> Cube = make_unique<OObject>(CubeVertex, sizeof(CubeVertex), CubeIndex, sizeof(CubeIndex));
-	//Cube->mLocation = { 2.f, 0.f, 0.f };
-	//mObjects.push_back(Cube);
-	//unique_ptr<OObject> Cube2 = make_unique<OObject>(CubeVertex, sizeof(CubeVertex), CubeIndex, sizeof(CubeIndex));
-	//Cube2->mLocation = { -2.f, 0.f, 0.f };
-	//mObjects.push_back(Cube2);
 	mObjects.push_back(make_unique<OObject>(CubeVertex, sizeof(CubeVertex), CubeIndex, sizeof(CubeIndex)));
-}
-
-CObjectManager::~CObjectManager()
-{
-	mObjects.clear();
+	mObjects.back()->mScale = Scale;
+	mObjects.back()->mRotation = Rotation;
+	mObjects.back()->mLocation = Location;
 }

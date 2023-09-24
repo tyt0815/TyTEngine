@@ -3,7 +3,7 @@
 #include "Core.h"
 
 OObject::OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t IndicesSize) :
-	mNumIndex(IndicesSize / sizeof(UINT)),
+	mNumIndex(UINT(IndicesSize / sizeof(UINT))),
 	mScale({1,1,1}),
 	mRotation({0,0,0}),
 	mLocation({0,0,0})
@@ -11,7 +11,7 @@ OObject::OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t In
 	D3D11_BUFFER_DESC VertexBufferDesc;
 	ZeroMemory(&VertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	VertexBufferDesc.ByteWidth = VerticesSize;
+	VertexBufferDesc.ByteWidth = UINT(VerticesSize);
 	VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	VertexBufferDesc.CPUAccessFlags = 0;
 	VertexBufferDesc.MiscFlags = 0;
@@ -23,7 +23,7 @@ OObject::OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t In
 	D3D11_BUFFER_DESC IndexBufferDesc;
 	ZeroMemory(&IndexBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	IndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	IndexBufferDesc.ByteWidth = IndicesSize;
+	IndexBufferDesc.ByteWidth = UINT(IndicesSize);
 	IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	IndexBufferDesc.CPUAccessFlags = 0;
 	IndexBufferDesc.MiscFlags = 0;
