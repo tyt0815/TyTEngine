@@ -2,7 +2,7 @@
 #include "Object.h"
 #include "Core.h"
 
-OObject::OObject(Vertex* Vertices, UINT VerticesSize, UINT* Indices, UINT IndicesSize) :
+OObject::OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t IndicesSize) :
 	mNumIndex(IndicesSize / sizeof(UINT)),
 	mScale({1,1,1}),
 	mRotation({0,0,0}),

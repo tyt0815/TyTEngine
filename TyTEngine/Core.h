@@ -40,4 +40,6 @@ private:
 	float mTheta;	// Camera의 w벡터(look at 방향 벡터)를 xy평면에 정사영한 벡터 * -1한 벡터와 x축과의 각도 
 	float mPhi;		// Camera의 w벡터와 Global y축과의 각도
 
+public:
+
 };

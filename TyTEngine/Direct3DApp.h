@@ -61,9 +61,9 @@ protected:
 	/*
 	* DirectX 11
 	*/
-	ID3D11Device* mD3DDevice;
-	ID3D11DeviceContext* mD3DImmediateContext;
-	D3D_DRIVER_TYPE mD3DDriverType;
+	ID3D11Device* md3dDevice;
+	ID3D11DeviceContext* md3dDeviceContext;
+	D3D_DRIVER_TYPE md3dDriverType;
 	UINT mSampleCount;
 	UINT m4xMsaaQuality;
 	bool mEnable4xMsaa;

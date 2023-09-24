@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ObjectManager.h"
 #include "Object.h"
+#include "Core.h"
 
 CObjectManager::CObjectManager()
 {
@@ -34,15 +35,17 @@ CObjectManager::CObjectManager()
 		4, 0, 3,
 		4, 3, 7
 	};
-	OObject* Cube = new OObject(CubeVertex, sizeof(CubeVertex), CubeIndex, sizeof(CubeIndex));
-	Cube->mLocation = { 2.f, 0.f, 0.f };
-	mObjects.push_back(Cube);
-	OObject* Cube2 = new OObject(CubeVertex, sizeof(CubeVertex), CubeIndex, sizeof(CubeIndex));
-	Cube2->mLocation = { -2.f, 0.f, 0.f };
-	Cube2->mRotation = { 0.f, UMathHelper::PI, 0.f };
-	mObjects.push_back(Cube2);
+
+	//unique_ptr<OObject> Cube = make_unique<OObject>(CubeVertex, sizeof(CubeVertex), CubeIndex, sizeof(CubeIndex));
+	//Cube->mLocation = { 2.f, 0.f, 0.f };
+	//mObjects.push_back(Cube);
+	//unique_ptr<OObject> Cube2 = make_unique<OObject>(CubeVertex, sizeof(CubeVertex), CubeIndex, sizeof(CubeIndex));
+	//Cube2->mLocation = { -2.f, 0.f, 0.f };
+	//mObjects.push_back(Cube2);
+	mObjects.push_back(make_unique<OObject>(CubeVertex, sizeof(CubeVertex), CubeIndex, sizeof(CubeIndex)));
 }
 
 CObjectManager::~CObjectManager()
 {
+	mObjects.clear();
 }

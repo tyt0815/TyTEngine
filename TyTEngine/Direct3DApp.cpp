@@ -19,14 +19,14 @@ CDirect3DApp::CDirect3DApp() :
 	mWindowClass(L"TyT"),
 	mhInst(0),
 	mCmdShow(0),
-	mD3DDriverType(D3D_DRIVER_TYPE_HARDWARE),
+	md3dDriverType(D3D_DRIVER_TYPE_HARDWARE),
 	mClientWidth(600),
 	mClientHeight(600),
 	mSampleCount(4),
 	mEnable4xMsaa(false),
 	mhMainWnd(0),
-	mD3DDevice(0),
-	mD3DImmediateContext(0),
+	md3dDevice(0),
+	md3dDeviceContext(0),
 	m4xMsaaQuality(0),
 	mSwapChain(0),
 	mRenderTargetView(0),
@@ -48,12 +48,12 @@ CDirect3DApp::~CDirect3DApp()
 	ReleaseCOM(mDepthStencilView);
 	ReleaseCOM(mSwapChain);
 	ReleaseCOM(mDepthStencilBuffer);
-	if (mD3DImmediateContext)
+	if (md3dDeviceContext)
 	{
-		mD3DImmediateContext->ClearState();
+		md3dDeviceContext->ClearState();
 	}
-	ReleaseCOM(mD3DImmediateContext);
-	ReleaseCOM(mD3DDevice);
+	ReleaseCOM(md3dDeviceContext);
+	ReleaseCOM(md3dDevice);
 	delete mScreenViewport;
 	delete mTimer;
 }
@@ -120,7 +120,7 @@ LRESULT CDirect3DApp::WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 		mClientWidth = LOWORD(lParam);
 		mClientWidth = HIWORD(lParam);
-		if (mD3DDevice)
+		if (md3dDevice)
 		{
 			if (wParam == SIZE_MINIMIZED)
 			{
@@ -275,15 +275,15 @@ bool CDirect3DApp::InitDirect3D()
 	D3D_FEATURE_LEVEL FeatureLevel;
 	HRESULT hr = D3D11CreateDevice(
 		nullptr,                // 디스플레이를 선택. null시 주 모니터로 선택.
-		mD3DDriverType,         // D3D_DRIVER_TYPE_HARDWARE를 일반적으로 사용. 다른 옵션은 문서 또는 교재 참고
+		md3dDriverType,         // D3D_DRIVER_TYPE_HARDWARE를 일반적으로 사용. 다른 옵션은 문서 또는 교재 참고
 		0,                      // 소프트 웨어 디바이스 사용 여부
 		CreateDeviceFlags,      // 옵셔널 플래그
 		nullptr,                // 피쳐 레벨 배열.
 		0,                      // 배열 원소의 수
 		D3D11_SDK_VERSION,      // SDK 버전 명시
-		&mD3DDevice,            // 반환값: Device
+		&md3dDevice,            // 반환값: Device
 		&FeatureLevel,          // 반환값: Feature Level
-		&mD3DImmediateContext   // 반환값: Context. Deferred context는 따로 존재함.
+		&md3dDeviceContext   // 반환값: Context. Deferred context는 따로 존재함.
 	);
 
 	if (FAILED(hr))
@@ -298,7 +298,7 @@ bool CDirect3DApp::InitDirect3D()
 	}
 
 	// 4.2.2 Check 4XMSAA Quality Support
-	HR(mD3DDevice->CheckMultisampleQualityLevels(
+	HR(md3dDevice->CheckMultisampleQualityLevels(
 		DXGI_FORMAT_R8G8B8A8_UNORM, mSampleCount, &m4xMsaaQuality));   // 차례대로 이미지 및 텍스처 포맷, 샘플의 수, 반환값
 	assert(m4xMsaaQuality > 0);         // 항상 0보다 커야함.
 
@@ -332,12 +332,12 @@ bool CDirect3DApp::InitDirect3D()
 
 	// 4.2.4 Create the Swap Chain
 	IDXGIDevice* dxgiDevice = 0;
-	HR(mD3DDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice));
+	HR(md3dDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice));
 	IDXGIAdapter* dxgiAdapter = 0;
 	HR(dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter));
 	IDXGIFactory* dxgiFactory = 0;
 	HR(dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory));
-	HR(dxgiFactory->CreateSwapChain(mD3DDevice, &sd, &mSwapChain));
+	HR(dxgiFactory->CreateSwapChain(md3dDevice, &sd, &mSwapChain));
 	HR(dxgiFactory->MakeWindowAssociation(mhMainWnd, DXGI_MWA_NO_WINDOW_CHANGES));
 
 	// 4.7 Exercises
@@ -404,8 +404,8 @@ bool CDirect3DApp::InitDirect3D()
 
 void CDirect3DApp::OnResize()
 {
-	assert(mD3DImmediateContext);
-	assert(mD3DDevice);
+	assert(md3dDeviceContext);
+	assert(md3dDevice);
 	assert(mSwapChain);
 
 	// Release the old views
@@ -417,7 +417,7 @@ void CDirect3DApp::OnResize()
 	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
 	ID3D11Texture2D* backBuffer;
 	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
-	HR(mD3DDevice->CreateRenderTargetView(backBuffer, 0, &mRenderTargetView));
+	HR(md3dDevice->CreateRenderTargetView(backBuffer, 0, &mRenderTargetView));
 	ReleaseCOM(backBuffer);
 
 	// Create the Depth/Stencil Buffer and View
@@ -445,11 +445,11 @@ void CDirect3DApp::OnResize()
 	DepthStencilDesc.CPUAccessFlags = 0;
 	DepthStencilDesc.MiscFlags = 0;
 
-	HR(mD3DDevice->CreateTexture2D(&DepthStencilDesc, 0, &mDepthStencilBuffer));
-	HR(mD3DDevice->CreateDepthStencilView(mDepthStencilBuffer, 0, &mDepthStencilView));
+	HR(md3dDevice->CreateTexture2D(&DepthStencilDesc, 0, &mDepthStencilBuffer));
+	HR(md3dDevice->CreateDepthStencilView(mDepthStencilBuffer, 0, &mDepthStencilView));
 
 	// Bind the Views to the Output Merger Stage
-	mD3DImmediateContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
+	md3dDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
 
 	// Set the Viewport
 	mScreenViewport->TopLeftX = 0;
@@ -463,7 +463,7 @@ void CDirect3DApp::OnResize()
 	mScreenViewport->MinDepth = 0.f;
 	mScreenViewport->MaxDepth = 1.f;
 
-	mD3DImmediateContext->RSSetViewports(1, mScreenViewport);
+	md3dDeviceContext->RSSetViewports(1, mScreenViewport);
 }
 
 void CDirect3DApp::CalculateFrameStats()

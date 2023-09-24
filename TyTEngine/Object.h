@@ -9,7 +9,7 @@ struct Vertex
 class OObject
 {
 public:
-	OObject(Vertex* Vertices, UINT VerticesSize, UINT* Indices, UINT NumIndex);
+	OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t NumIndex);
 	~OObject();
 	XMMATRIX GetWorldMatrix();
 
