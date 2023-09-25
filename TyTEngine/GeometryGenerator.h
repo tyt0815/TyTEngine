@@ -30,10 +30,12 @@ public:
 		std::vector<UINT> Indices;
 	};
 
-	static void CreateGrid(float Width, float Depth, UINT m, UINT n, MeshData& MeshData);
-	static void CreateCylinder(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& MeshData);
+	static void CreateGrid(float Width, float Depth, UINT m, UINT n, MeshData& Mesh);
+	static void CreateCylinder(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh);
+	static void CreateGeosphere(float Radius, UINT NumSubdivisions, MeshData& Mesh);
 
 private:
-	static void BuildCylinderTopCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT stackCount, MeshData& MeshData);
-	static void BuildCylinderBottomCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT stackCount, MeshData& MeshData);
+	static void BuildCylinderTopCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT stackCount, MeshData& Mesh);
+	static void BuildCylinderBottomCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT stackCount, MeshData& Mesh);
+	static void Subdivide(MeshData& Mesh);
 };

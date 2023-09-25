@@ -5,8 +5,9 @@
 
 CObjectManager::CObjectManager()
 {
-	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { 2,0,0 }, Colors::Blue);
-	CreateCylinderObject({ 1,1,1 }, { 0,0,0 }, { -2,0,0 }, Colors::Red, 1, 1, 2, 128, 1);
+	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { 2,0,0 }, Colors::Red);
+	CreateCylinderObject({ 1,1,1 }, { 0,0,0 }, { -2,0,0 }, Colors::Green, 1, 1, 2, 128, 1);
+	CreateGeoSphereObject({ 1,1,1 }, { 0,0,0 }, { 0,2,0 }, Colors::Blue, 1, 5);
 	CreateGridHillObject({ 1,1,1 }, { 0,0,0 }, { 0,-5,0 });
 }
 
@@ -125,6 +126,19 @@ void CObjectManager::CreateCylinderObject(
 		CylinderVertices[i] = { Cylinder.Vertices[i].Position, XMFLOAT4((const float*)(&Color)) };
 	}
 	PushObjectBuffers(CylinderVertices, Cylinder.Indices, Scale, Rotation, Location);
+}
+
+void CObjectManager::CreateGeoSphereObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color, float Radius, UINT NumSubdivisions)
+{
+	OGeometryGenerator::MeshData Sphere;
+	OGeometryGenerator::CreateGeosphere(Radius, NumSubdivisions, Sphere);
+	vector<Vertex> SphereVertices;
+	SphereVertices.resize(Sphere.Vertices.size());
+	for (int i = 0; i < Sphere.Vertices.size(); ++i)
+	{
+		SphereVertices[i] = { Sphere.Vertices[i].Position, XMFLOAT4((const float*)(&Color)) };
+	}
+	PushObjectBuffers(SphereVertices, Sphere.Indices, Scale, Rotation, Location);
 }
 
 float CObjectManager::GetHeight(float x, float z)

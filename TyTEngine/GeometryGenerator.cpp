@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "GeometryGenerator.h"
 
-void OGeometryGenerator::CreateGrid(float Width, float Depth, UINT m, UINT n, MeshData& MeshData)
+void OGeometryGenerator::CreateGrid(float Width, float Depth, UINT m, UINT n, MeshData& Mesh)
 {
 	UINT VertexCount = m * n;
 	UINT FaceCount = (m - 1) * (n - 1) * 2;
@@ -14,46 +14,46 @@ void OGeometryGenerator::CreateGrid(float Width, float Depth, UINT m, UINT n, Me
 	float dz = Depth / (m - 1);
 	float du = 1.0f / (n - 1);
 	float dv = 1.0f / (m - 1);
-	MeshData.Vertices.resize(VertexCount);
+	Mesh.Vertices.resize(VertexCount);
 	for (UINT i = 0; i < m; ++i)
 	{
 		float z = HalfDepth - i * dz;
 		for (UINT j = 0; j < n; ++j) 
 		{
 			float x = -HalfWidth + j * dx;
-			MeshData.Vertices[i * n + j].Position = XMFLOAT3(x, 0.0f, z);
+			Mesh.Vertices[i * n + j].Position = XMFLOAT3(x, 0.0f, z);
 			// Ignore for now, used for lighting.
-			MeshData.Vertices[i * n + j].Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-			MeshData.Vertices[i * n + j].TangentU = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			Mesh.Vertices[i * n + j].Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			Mesh.Vertices[i * n + j].TangentU = XMFLOAT3(1.0f, 0.0f, 0.0f);
 			// Ignore for now, used for texturing.
-			MeshData.Vertices[i * n + j].TexC.x = j * du;
-			MeshData.Vertices[i * n + j].TexC.y = i * dv;
+			Mesh.Vertices[i * n + j].TexC.x = j * du;
+			Mesh.Vertices[i * n + j].TexC.y = i * dv;
 		}
 	}
 
-	MeshData.Indices.resize(FaceCount * 3); // 3 indices per face
+	Mesh.Indices.resize(FaceCount * 3); // 3 indices per face
 	// Iterate over each quad and compute indices.
 	UINT k = 0;
 	for (UINT i = 0; i < m - 1; ++i)
 	{
 		for (UINT j = 0; j < n - 1; ++j)
 		{
-			MeshData.Indices[k] = i * n + j;
-			MeshData.Indices[k + 1] = i * n + j + 1;
-			MeshData.Indices[k + 2] = (i + 1) * n + j;
-			MeshData.Indices[k + 3] = (i + 1) * n + j;
-			MeshData.Indices[k + 4] = i * n + j + 1;
-			MeshData.Indices[k + 5] = (i + 1) * n + j + 1;
+			Mesh.Indices[k] = i * n + j;
+			Mesh.Indices[k + 1] = i * n + j + 1;
+			Mesh.Indices[k + 2] = (i + 1) * n + j;
+			Mesh.Indices[k + 3] = (i + 1) * n + j;
+			Mesh.Indices[k + 4] = i * n + j + 1;
+			Mesh.Indices[k + 5] = (i + 1) * n + j + 1;
 			k += 6; // next quad
 		}
 	}
 
 }
 
-void OGeometryGenerator::CreateCylinder(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& MeshData)
+void OGeometryGenerator::CreateCylinder(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
 {
-	MeshData.Vertices.clear();
-	MeshData.Indices.clear();
+	Mesh.Vertices.clear();
+	Mesh.Indices.clear();
 	//
 	// Build Stacks.
 	//
@@ -106,7 +106,7 @@ void OGeometryGenerator::CreateCylinder(float BottomRadius, float TopRadius, flo
 			XMVECTOR B = XMLoadFloat3(&bitangent);
 			XMVECTOR N = XMVector3Normalize(XMVector3Cross(T, B));
 			XMStoreFloat3(&vertex.Normal, N);
-			MeshData.Vertices.push_back(vertex);
+			Mesh.Vertices.push_back(vertex);
 		}
 	}
 	// Add one because we duplicate the first and last vertex per ring
@@ -117,23 +117,81 @@ void OGeometryGenerator::CreateCylinder(float BottomRadius, float TopRadius, flo
 	{
 		for (UINT j = 0; j < SliceCount; ++j)
 		{
-			MeshData.Indices.push_back(i * ringVertexCount + j);
-			MeshData.Indices.push_back((i + 1) * ringVertexCount + j);
-			MeshData.Indices.push_back((i + 1) * ringVertexCount + j + 1);
-			MeshData.Indices.push_back(i * ringVertexCount + j);
-			MeshData.Indices.push_back((i + 1) * ringVertexCount + j + 1);
-			MeshData.Indices.push_back(i * ringVertexCount + j + 1);
+			Mesh.Indices.push_back(i * ringVertexCount + j);
+			Mesh.Indices.push_back((i + 1) * ringVertexCount + j);
+			Mesh.Indices.push_back((i + 1) * ringVertexCount + j + 1);
+			Mesh.Indices.push_back(i * ringVertexCount + j);
+			Mesh.Indices.push_back((i + 1) * ringVertexCount + j + 1);
+			Mesh.Indices.push_back(i * ringVertexCount + j + 1);
 		}
 	}
 	BuildCylinderTopCap(BottomRadius, TopRadius,
-		Height, SliceCount, StackCount, MeshData);
+		Height, SliceCount, StackCount, Mesh);
 	BuildCylinderBottomCap(BottomRadius, TopRadius,
-		Height, SliceCount, StackCount, MeshData);
+		Height, SliceCount, StackCount, Mesh);
 }
 
-void OGeometryGenerator::BuildCylinderTopCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& MeshData)
+void OGeometryGenerator::CreateGeosphere(float Radius, UINT NumSubdivisions, MeshData& Mesh)
 {
-	UINT BaseIndex = (UINT)MeshData.Vertices.size();
+	// Put a cap on the number of subdivisions.
+	NumSubdivisions = UMathHelper::Min(NumSubdivisions, 5u);
+	// Approximate a sphere by tessellating(바둑판모양) an icosahedron(20면체). X^2 + Z^2 == 1
+	const float X = 0.525731f;
+	const float Z = 0.850651f;
+	XMFLOAT3 IcosahedronVertices[12] =
+	{
+	XMFLOAT3(-X, 0.0f, Z), XMFLOAT3(X, 0.0f, Z),
+	XMFLOAT3(-X, 0.0f, -Z), XMFLOAT3(X, 0.0f, -Z),
+	XMFLOAT3(0.0f, Z, X), XMFLOAT3(0.0f, Z, -X),
+	XMFLOAT3(0.0f, -Z, X), XMFLOAT3(0.0f, -Z, -X),
+	XMFLOAT3(Z, X, 0.0f), XMFLOAT3(-Z, X, 0.0f),
+	XMFLOAT3(Z, -X, 0.0f), XMFLOAT3(-Z, -X, 0.0f)
+	};
+	DWORD IcosahedronIndices[60] =
+	{
+	1,4,0, 4,9,0, 4,5,9, 8,5,4, 1,8,4,
+	1,10,8, 10,3,8, 8,3,5, 3,2,5, 3,7,2,
+	3,10,7, 10,6,7, 6,11,7, 6,0,11, 6,1,0,
+	10,1,6, 11,0,9, 2,11,9, 5,2,9, 11,2,7
+	};
+	Mesh.Vertices.resize(12);
+	Mesh.Indices.resize(60);
+	for (size_t i = 0; i < 12; ++i)
+		Mesh.Vertices[i].Position = IcosahedronVertices[i];
+	for (size_t i = 0; i < 60; ++i)
+		Mesh.Indices[i] = IcosahedronIndices[i];
+	for (size_t i = 0; i < NumSubdivisions; ++i)
+		Subdivide(Mesh);
+	// Project vertices onto sphere and scale.
+	for (size_t i = 0; i < Mesh.Vertices.size(); ++i)
+	{
+		// Project onto unit sphere.
+		XMVECTOR NormVector = XMVector3Normalize(XMLoadFloat3(
+			&Mesh.Vertices[i].Position));
+		// Project onto sphere.
+		XMVECTOR PositionVector = Radius * NormVector;
+		XMStoreFloat3(&Mesh.Vertices[i].Position, PositionVector);
+		XMStoreFloat3(&Mesh.Vertices[i].Normal, NormVector);
+		// Derive texture coordinates from spherical coordinates.
+		float Theta = UMathHelper::AngleFromXY(
+			Mesh.Vertices[i].Position.x,
+			Mesh.Vertices[i].Position.z);
+		float Phi = acosf(Mesh.Vertices[i].Position.y / Radius);
+		Mesh.Vertices[i].TexC.x = Theta / XM_2PI;
+		Mesh.Vertices[i].TexC.y = Phi / XM_PI;
+		// Partial derivative of P with respect to theta
+		Mesh.Vertices[i].TangentU.x = -Radius * sinf(Phi) * sinf(Theta);
+		Mesh.Vertices[i].TangentU.y = 0.0f;
+		Mesh.Vertices[i].TangentU.z = +Radius * sinf(Phi) * cosf(Theta);
+		XMVECTOR T = XMLoadFloat3(&Mesh.Vertices[i].TangentU);
+		XMStoreFloat3(&Mesh.Vertices[i].TangentU,
+			XMVector3Normalize(T));
+	}
+}
+
+void OGeometryGenerator::BuildCylinderTopCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
+{
+	UINT BaseIndex = (UINT)Mesh.Vertices.size();
 	float y = 0.5f * Height;
 	float dTheta = 2.0f * XM_PI / SliceCount;
 	// Duplicate cap ring vertices because the texture coordinates
@@ -146,32 +204,32 @@ void OGeometryGenerator::BuildCylinderTopCap(float BottomRadius, float TopRadius
 		// texture coord area proportional to base.
 		float u = x / Height + 0.5f;
 		float v = z / Height + 0.5f;
-		MeshData.Vertices.push_back(
+		Mesh.Vertices.push_back(
 			Vertex(x, y, z,
 				0.0f, 1.0f, 0.0f,
 				1.0f, 0.0f, 0.0f,
 				u, v));
 	}
 	// Cap center vertex.
-	MeshData.Vertices.push_back(
+	Mesh.Vertices.push_back(
 		Vertex(0.0f, y, 0.0f,
 			0.0f, 1.0f, 0.0f,
 			1.0f, 0.0f, 0.0f,
 			0.5f, 0.5f));
 	// Index of center vertex.
-	UINT CenterIndex = (UINT)MeshData.Vertices.size() - 1;
+	UINT CenterIndex = (UINT)Mesh.Vertices.size() - 1;
 	for (UINT i = 0; i < SliceCount; ++i)
 	{
-		MeshData.Indices.push_back(CenterIndex);
-		MeshData.Indices.push_back(BaseIndex + i + 1);
-		MeshData.Indices.push_back(BaseIndex + i);
+		Mesh.Indices.push_back(CenterIndex);
+		Mesh.Indices.push_back(BaseIndex + i + 1);
+		Mesh.Indices.push_back(BaseIndex + i);
 	}
 
 }
 
-void OGeometryGenerator::BuildCylinderBottomCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& MeshData)
+void OGeometryGenerator::BuildCylinderBottomCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
 {
-	UINT BaseIndex = (UINT)MeshData.Vertices.size();
+	UINT BaseIndex = (UINT)Mesh.Vertices.size();
 	float y = -0.5f * Height;
 	float dTheta = 2.0f * XM_PI / SliceCount;
 	// Duplicate cap ring vertices because the texture coordinates
@@ -184,24 +242,103 @@ void OGeometryGenerator::BuildCylinderBottomCap(float BottomRadius, float TopRad
 		// texture coord area proportional to base.
 		float u = x / Height + 0.5f;
 		float v = z / Height + 0.5f;
-		MeshData.Vertices.push_back(
+		Mesh.Vertices.push_back(
 			Vertex(x, y, z,
 				0.0f, 1.0f, 0.0f,
 				1.0f, 0.0f, 0.0f,
 				u, v));
 	}
 	// Cap center vertex.
-	MeshData.Vertices.push_back(
+	Mesh.Vertices.push_back(
 		Vertex(0.0f, y, 0.0f,
 			0.0f, 1.0f, 0.0f,
 			1.0f, 0.0f, 0.0f,
 			0.5f, 0.5f));
 	// Index of center vertex.
-	UINT CenterIndex = (UINT)MeshData.Vertices.size() - 1;
+	UINT CenterIndex = (UINT)Mesh.Vertices.size() - 1;
 	for (UINT i = 0; i < SliceCount; ++i)
 	{
-		MeshData.Indices.push_back(CenterIndex);
-		MeshData.Indices.push_back(BaseIndex + i);
-		MeshData.Indices.push_back(BaseIndex + i + 1);
+		Mesh.Indices.push_back(CenterIndex);
+		Mesh.Indices.push_back(BaseIndex + i);
+		Mesh.Indices.push_back(BaseIndex + i + 1);
+	}
+}
+
+void OGeometryGenerator::Subdivide(MeshData& Mesh)
+{
+	// Save a copy of the input geometry.
+	MeshData InputCopy = Mesh;
+
+
+	Mesh.Vertices.resize(0);
+	Mesh.Indices.resize(0);
+
+	//       v1
+	//       *
+	//      / \
+	//     /   \
+	//  m0*-----*m1
+	//   / \   / \
+	//  /   \ /   \
+	// *-----*-----*
+	// v0    m2     v2
+
+	UINT NumTris = InputCopy.Indices.size() / 3;
+	for (UINT i = 0; i < NumTris; ++i)
+	{
+		Vertex v0 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 0]];
+		Vertex v1 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 1]];
+		Vertex v2 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 2]];
+
+		//
+		// Generate the midpoints.
+		//
+
+		Vertex m0, m1, m2;
+
+		// For subdivision, we just care about the position component.  We derive the other
+		// vertex components in CreateGeosphere.
+
+		m0.Position = XMFLOAT3(
+			0.5f * (v0.Position.x + v1.Position.x),
+			0.5f * (v0.Position.y + v1.Position.y),
+			0.5f * (v0.Position.z + v1.Position.z));
+
+		m1.Position = XMFLOAT3(
+			0.5f * (v1.Position.x + v2.Position.x),
+			0.5f * (v1.Position.y + v2.Position.y),
+			0.5f * (v1.Position.z + v2.Position.z));
+
+		m2.Position = XMFLOAT3(
+			0.5f * (v0.Position.x + v2.Position.x),
+			0.5f * (v0.Position.y + v2.Position.y),
+			0.5f * (v0.Position.z + v2.Position.z));
+
+		//
+		// Add new geometry.
+		//
+
+		Mesh.Vertices.push_back(v0); // 0
+		Mesh.Vertices.push_back(v1); // 1
+		Mesh.Vertices.push_back(v2); // 2
+		Mesh.Vertices.push_back(m0); // 3
+		Mesh.Vertices.push_back(m1); // 4
+		Mesh.Vertices.push_back(m2); // 5
+
+		Mesh.Indices.push_back(i * 6 + 0);
+		Mesh.Indices.push_back(i * 6 + 3);
+		Mesh.Indices.push_back(i * 6 + 5);
+
+		Mesh.Indices.push_back(i * 6 + 3);
+		Mesh.Indices.push_back(i * 6 + 4);
+		Mesh.Indices.push_back(i * 6 + 5);
+
+		Mesh.Indices.push_back(i * 6 + 5);
+		Mesh.Indices.push_back(i * 6 + 4);
+		Mesh.Indices.push_back(i * 6 + 2);
+
+		Mesh.Indices.push_back(i * 6 + 3);
+		Mesh.Indices.push_back(i * 6 + 1);
+		Mesh.Indices.push_back(i * 6 + 4);
 	}
 }

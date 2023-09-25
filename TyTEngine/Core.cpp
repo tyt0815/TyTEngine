@@ -13,8 +13,8 @@ CCore::CCore():
 	mPixelShader(0),
 	mInputLayout(0),
 	mRadius(5.f),
-	mTheta(1.5f * UMathHelper::PI),
-	mPhi(0.25f * UMathHelper::PI)
+	mTheta(1.5f * UMathHelper::Pi),
+	mPhi(0.25f * UMathHelper::Pi)
 {
 	XMMATRIX I = XMMatrixIdentity();
 	XMStoreFloat4x4(&mViewMat, I);
@@ -48,7 +48,7 @@ void CCore::OnResize()
 	CDirect3DApp::OnResize();
 	// 창이 리사이즈되면 projection matrix를 재계산
 	XMMATRIX ResizedProjMat = XMMatrixPerspectiveFovLH(
-		0.5f * UMathHelper::PI,	// FOV = 90
+		0.5f * UMathHelper::Pi,	// FOV = 90
 		GetAspectRatio(),
 		1.f,
 		1000.f
@@ -127,7 +127,7 @@ void CCore::OnMouseMove(WPARAM BtnState, int x, int y)
 		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
 		mTheta -= dx;
 		mPhi -= dy;
-		mPhi = UMathHelper::Clamp<float>(mPhi, 0.1f, UMathHelper::PI - 0.1f);
+		mPhi = UMathHelper::Clamp<float>(mPhi, 0.1f, UMathHelper::Pi - 0.1f);
 	}
 	else if((BtnState & MK_RBUTTON) != 0)
 	{

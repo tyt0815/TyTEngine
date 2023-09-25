@@ -16,6 +16,7 @@ private:
 	void CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location);
 	void CreateCylinderObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color,
 		float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount);
+	void CreateGeoSphereObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color, float Radius, UINT NumSubdivisions);
 	void PushObjectBuffers(std::vector<Vertex> CubeVertex, std::vector<UINT> CubeIndex, const DirectX::XMFLOAT3 Scale, const DirectX::XMFLOAT3 Rotation, const DirectX::XMFLOAT3 Location);
 	float GetHeight(float x, float z);
 };
