@@ -6,7 +6,7 @@
 CObjectManager::CObjectManager()
 {
 	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { 2,0,0 }, Colors::Blue);
-	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { -2,0,0 }, Colors::Red);
+	CreateCylinderObject({ 1,1,1 }, { 0,0,0 }, { -2,0,0 }, Colors::Red, 1, 1, 2, 128, 1);
 	CreateGridHillObject({ 1,1,1 }, { 0,0,0 }, { 0,-5,0 });
 }
 
@@ -50,7 +50,7 @@ void CObjectManager::CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotat
 	PushObjectBuffers(CubeVertex, CubeIndex, Scale, Rotation, Location);
 }
 
-void CObjectManager::PushObjectBuffers(std::vector<Vertex>& Vertices, std::vector<UINT>& Indices, const DirectX::XMFLOAT3& Scale, const DirectX::XMFLOAT3& Rotation, const DirectX::XMFLOAT3& Location)
+void CObjectManager::PushObjectBuffers(std::vector<Vertex> Vertices, std::vector<UINT> Indices, const DirectX::XMFLOAT3 Scale, const DirectX::XMFLOAT3 Rotation, const DirectX::XMFLOAT3 Location)
 {
 	mObjects.push_back(make_unique<OObject>(Vertices, sizeof(Vertex) * Vertices.size(), Indices, sizeof(UINT) * Indices.size()));
 	mObjects.back()->mScale = Scale;
@@ -95,6 +95,36 @@ void CObjectManager::CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 R
 		}
 	}
 	PushObjectBuffers(GridVertices, Grid.Indices, Scale, Rotation, Location);
+}
+
+void CObjectManager::CreateCylinderObject(
+	const XMFLOAT3 Scale,
+	const XMFLOAT3 Rotation,
+	const XMFLOAT3 Location,
+	const XMVECTORF32 Color,
+	float BottomRadius,
+	float TopRadius,
+	float Height,
+	UINT SliceCount,
+	UINT StackCount
+)
+{
+	OGeometryGenerator::MeshData Cylinder;
+	OGeometryGenerator::CreateCylinder(
+		BottomRadius,
+		TopRadius,
+		Height,
+		SliceCount,
+		StackCount,
+		Cylinder
+	);
+	vector<Vertex> CylinderVertices;
+	CylinderVertices.resize(Cylinder.Vertices.size());
+	for (int i = 0; i < Cylinder.Vertices.size(); ++i)
+	{
+		CylinderVertices[i] = { Cylinder.Vertices[i].Position, XMFLOAT4((const float*)(&Color)) };
+	}
+	PushObjectBuffers(CylinderVertices, Cylinder.Indices, Scale, Rotation, Location);
 }
 
 float CObjectManager::GetHeight(float x, float z)

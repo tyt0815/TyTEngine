@@ -31,4 +31,9 @@ public:
 	};
 
 	static void CreateGrid(float Width, float Depth, UINT m, UINT n, MeshData& MeshData);
+	static void CreateCylinder(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& MeshData);
+
+private:
+	static void BuildCylinderTopCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT stackCount, MeshData& MeshData);
+	static void BuildCylinderBottomCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT stackCount, MeshData& MeshData);
 };
