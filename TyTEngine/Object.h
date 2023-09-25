@@ -1,15 +1,9 @@
 #pragma once
 
-struct Vertex
-{
-	XMFLOAT3 Pos;
-	XMFLOAT4 Color;
-};
-
 class OObject
 {
 public:
-	OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t NumIndex);
+	OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indices, size_t NumIndex);
 	~OObject();
 	XMMATRIX GetWorldMatrix();
 

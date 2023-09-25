@@ -67,3 +67,9 @@ static void _PrintDebugString(const char* format, ...) {
     OutputDebugStringA(buf);
 }
 #endif
+
+struct Vertex
+{
+    XMFLOAT3 Pos;
+    XMFLOAT4 Color;
+};

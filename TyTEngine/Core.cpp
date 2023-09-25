@@ -51,7 +51,7 @@ void CCore::OnResize()
 		0.5f * UMathHelper::PI,	// FOV = 90
 		GetAspectRatio(),
 		1.f,
-		100.f
+		1000.f
 	);
 	XMStoreFloat4x4(&mProjMat, ResizedProjMat);
 }
@@ -78,6 +78,7 @@ void CCore::DrawScene()
 	md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::White));
 	md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D10_CLEAR_STENCIL, 1.0f, 0);
 
+	// Draw Objects
 	md3dDeviceContext->IASetInputLayout(mInputLayout);
 	md3dDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	UINT Stride = sizeof(Vertex);

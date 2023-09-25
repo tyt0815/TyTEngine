@@ -2,7 +2,7 @@
 #include "Object.h"
 #include "Core.h"
 
-OObject::OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t IndicesSize) :
+OObject::OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indices, size_t IndicesSize) :
 	mNumIndex(UINT(IndicesSize / sizeof(UINT))),
 	mScale({1,1,1}),
 	mRotation({0,0,0}),
@@ -17,7 +17,7 @@ OObject::OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t In
 	VertexBufferDesc.MiscFlags = 0;
 	VertexBufferDesc.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA VertexInitData;
-	VertexInitData.pSysMem = Vertices;
+	VertexInitData.pSysMem = &Vertices[0];
 	HR(CCore::GetInstance()->CreateD3D11Buffer(&VertexBufferDesc, &VertexInitData, &mVertexBuffer));
 
 	D3D11_BUFFER_DESC IndexBufferDesc;
@@ -29,7 +29,7 @@ OObject::OObject(Vertex* Vertices, size_t VerticesSize, UINT* Indices, size_t In
 	IndexBufferDesc.MiscFlags = 0;
 	IndexBufferDesc.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA IndexInitData;
-	IndexInitData.pSysMem = Indices;
+	IndexInitData.pSysMem = &Indices[0];
 	HR(CCore::GetInstance()->CreateD3D11Buffer(&IndexBufferDesc, &IndexInitData, &mIndexBuffer));
 }
 

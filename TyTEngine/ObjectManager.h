@@ -12,6 +12,8 @@ private:
 	CObjectManager();
 	~CObjectManager();
 
-	void CreateCubeObject(XMFLOAT3 Scale, XMFLOAT3 Rotation, XMFLOAT3 Location, const XMVECTORF32 Color);
-
+	void CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color);
+	void PushObjectBuffers(std::vector<Vertex>& CubeVertex, std::vector<UINT>& CubeIndex, const DirectX::XMFLOAT3& Scale, const DirectX::XMFLOAT3& Rotation, const DirectX::XMFLOAT3& Location);
+	void CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location);
+	float GetHeight(float x, float z);
 };

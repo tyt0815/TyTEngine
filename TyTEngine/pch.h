@@ -15,5 +15,6 @@
 #include "DirectXUtil.h"
 #include "MathHelper.h"
 #include "CommonUtility.h"
+#include "GeometryGenerator.h"
 
 using namespace std;
