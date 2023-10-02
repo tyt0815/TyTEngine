@@ -4,6 +4,8 @@
 cbuffer PerFrame : register(b0)
 {
 	DirectionalLight gDirLight;
+	PointLight gPointLight;
+	SpotLight gSpotLight;
 	float3 gEyePosW;
 };
 
@@ -32,13 +34,16 @@ float4 PSMain(VertexOut PIn) : SV_TARGET
 	float4 AmbientOut, DiffuseOut, SpecularOut;
 	
 	ComputeDirectionalLight(gMaterial, gDirLight, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
-	
+	Ambient += AmbientOut;
+	Diffuse += DiffuseOut;
+	Specular += SpecularOut;
+
+	ComputePointLight(gMaterial, gPointLight, PIn.PosW, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
 	Ambient += AmbientOut;
 	Diffuse += DiffuseOut;
 	Specular += SpecularOut;
 
 	float4 LitColor = Ambient + Diffuse + Specular;
 	LitColor.a = gMaterial.Diffuse.a;
-	
 	return LitColor;
 }

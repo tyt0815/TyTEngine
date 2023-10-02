@@ -3,7 +3,7 @@
 class OObject
 {
 public:
-	OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indices, size_t NumIndex);
+	OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indices, size_t NumIndex, XMVECTORF32 Color);
 	~OObject();
 	XMMATRIX GetWorldMatrix();
 

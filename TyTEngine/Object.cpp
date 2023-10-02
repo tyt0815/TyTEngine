@@ -2,7 +2,7 @@
 #include "Object.h"
 #include "Core.h"
 
-OObject::OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indices, size_t IndicesSize) :
+OObject::OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indices, size_t IndicesSize, XMVECTORF32 Color) :
 	mNumIndex(UINT(IndicesSize / sizeof(UINT))),
 	mScale({1,1,1}),
 	mRotation({0,0,0}),
@@ -32,10 +32,11 @@ OObject::OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indi
 	IndexInitData.pSysMem = &Indices[0];
 	HR(CCore::GetInstance()->CreateD3D11Buffer(&IndexBufferDesc, &IndexInitData, &mIndexBuffer));
 	
-	mMaterial.Ambient = Vertices[0].Color;
-	mMaterial.Diffuse = Vertices[0].Color;
-	mMaterial.Specular = Vertices[0].Color;
-	mMaterial.Specular.w = 8;
+	XMStoreFloat4(&mMaterial.Ambient, Color.v);
+	XMStoreFloat4(&mMaterial.Diffuse, Color.v);
+	XMStoreFloat4(&mMaterial.Specular, Color.v);
+	mMaterial.Diffuse.w = .0f;
+	mMaterial.Specular.w=8;
 	mMaterial.Reflect = {};
 }
 

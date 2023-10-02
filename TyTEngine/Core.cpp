@@ -17,6 +17,7 @@ CCore::CCore():
 	mTheta(1.5f * UMathHelper::Pi),
 	mPhi(0.25f * UMathHelper::Pi)
 {
+	mCameraPos = {};
 	XMMATRIX I = XMMatrixIdentity();
 	XMStoreFloat4x4(&mViewMat, I);
 	XMStoreFloat4x4(&mProjMat, I);
@@ -125,7 +126,9 @@ void CCore::PSPerFrameConstantBufferUpdate()
 	PSPerFrameConstantBuffer* ConstantBuffer;
 	md3dDeviceContext->Map(mPSPerFrameConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
 	ConstantBuffer = (PSPerFrameConstantBuffer*)MappedSubresource.pData;
-	ConstantBuffer->DirLight = CObjectManager::GetInstance()->mDirLight;
+	ConstantBuffer->DirLit = CObjectManager::GetInstance()->mDirLight;
+	ConstantBuffer->PointLit = CObjectManager::GetInstance()->mPointLight;
+	ConstantBuffer->SpotLit = CObjectManager::GetInstance()->mSpotLight;
 	ConstantBuffer->EyePosW = mCameraPos;
 	md3dDeviceContext->Unmap(mPSPerFrameConstantBuffer, 0);
 	md3dDeviceContext->PSSetConstantBuffers(0, 1, &mPSPerFrameConstantBuffer);

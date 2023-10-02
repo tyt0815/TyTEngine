@@ -24,7 +24,6 @@ struct Vertex
 {
     XMFLOAT3 Pos;
     XMFLOAT3 Normal;
-    XMFLOAT4 Color;
 };
 
 struct VSPerObjectConstantBuffer
@@ -36,7 +35,9 @@ struct VSPerObjectConstantBuffer
 
 struct PSPerFrameConstantBuffer
 {
-    DirectionalLight DirLight;
+    DirectionalLight DirLit;
+    PointLight PointLit;
+    SpotLight SpotLit;
     XMFLOAT3 EyePosW;
 };
 
