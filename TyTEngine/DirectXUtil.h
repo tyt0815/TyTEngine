@@ -5,8 +5,8 @@ using namespace DirectX;
 #include "GameTimer.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
-    #ifndef HR
-        #define HR(x)                                            \
+#ifndef HR
+#define HR(x)                                            \
             {                                                        \
                 HRESULT hr = (x);                                    \
                 if(FAILED(hr))                                       \
@@ -24,11 +24,11 @@ using namespace DirectX;
                     MessageBox(NULL, output, L"Error", MB_OK);       \
                 }                                                    \
             }
-    #endif
+#endif
 #else
-    #ifndef HR
-        #define HR(x) (x)
-    #endif
+#ifndef HR
+#define HR(x) (x)
+#endif
 #endif
 
 #define ReleaseCOM(x) { if(x){x->Release(); x= 0; }}
@@ -68,8 +68,3 @@ static void _PrintDebugString(const char* format, ...) {
 }
 #endif
 
-struct Vertex
-{
-    XMFLOAT3 Pos;
-    XMFLOAT4 Color;
-};

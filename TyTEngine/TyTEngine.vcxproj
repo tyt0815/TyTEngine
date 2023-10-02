@@ -133,6 +133,7 @@
     <ClCompile Include="Direct3DApp.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
+    <ClCompile Include="LightHelper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="DirectXUtil.h" />
     <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="LightHelper.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="Object.h" />
@@ -159,6 +161,17 @@
     <None Include="VertexShader.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LightHelper.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MathHelper.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

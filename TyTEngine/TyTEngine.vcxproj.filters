@@ -72,6 +72,9 @@
     <ClCompile Include="GeometryGenerator.cpp">
       <Filter>Object\Private</Filter>
     </ClCompile>
+    <ClCompile Include="LightHelper.cpp">
+      <Filter>Engine\Utility\Private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -104,12 +107,21 @@
     <ClInclude Include="GeometryGenerator.h">
       <Filter>Object\Public</Filter>
     </ClInclude>
+    <ClInclude Include="LightHelper.h">
+      <Filter>Engine\Utility\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="VertexShader.hlsl">
+    <None Include="LightHelper.hlsl">
       <Filter>Shader</Filter>
     </None>
     <None Include="PixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="VertexShader.hlsl">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="MathHelper.hlsl">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

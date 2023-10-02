@@ -31,6 +31,12 @@ OObject::OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indi
 	D3D11_SUBRESOURCE_DATA IndexInitData;
 	IndexInitData.pSysMem = &Indices[0];
 	HR(CCore::GetInstance()->CreateD3D11Buffer(&IndexBufferDesc, &IndexInitData, &mIndexBuffer));
+	
+	mMaterial.Ambient = Vertices[0].Color;
+	mMaterial.Diffuse = Vertices[0].Color;
+	mMaterial.Specular = Vertices[0].Color;
+	mMaterial.Specular.w = 8;
+	mMaterial.Reflect = {};
 }
 
 OObject::~OObject()

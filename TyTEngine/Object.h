@@ -13,4 +13,5 @@ public:
 	XMFLOAT3 mLocation;
 	XMFLOAT3 mRotation;	// ¶óµð¾È
 	XMFLOAT3 mScale;
+	Material mMaterial;
 };

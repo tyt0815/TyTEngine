@@ -29,7 +29,7 @@ public:
 		std::vector<Vertex> Vertices;
 		std::vector<UINT> Indices;
 	};
-
+	static void CreateCube(float Width, float Height, float Depth, MeshData& Mesh);
 	static void CreateGrid(float Width, float Depth, UINT m, UINT n, MeshData& Mesh);
 	static void CreateCylinder(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh);
 	static void CreateGeosphere(float Radius, UINT NumSubdivisions, MeshData& Mesh);

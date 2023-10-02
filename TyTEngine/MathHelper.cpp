@@ -38,3 +38,11 @@ float UMathHelper::AngleFromXY(float A, float B)
 
 	return theta;
 }
+
+XMMATRIX UMathHelper::InverseTranspose(CXMMATRIX Matrix)
+{
+	XMMATRIX Result = Matrix;
+	Result.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	XMVECTOR Det = XMMatrixDeterminant(Result);
+	return XMMatrixTranspose(XMMatrixInverse(&Det, Result));
+}

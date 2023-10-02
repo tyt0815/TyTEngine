@@ -16,5 +16,31 @@
 #include "MathHelper.h"
 #include "CommonUtility.h"
 #include "GeometryGenerator.h"
+#include "LightHelper.h"
 
 using namespace std;
+
+struct Vertex
+{
+    XMFLOAT3 Pos;
+    XMFLOAT3 Normal;
+    XMFLOAT4 Color;
+};
+
+struct VSPerObjectConstantBuffer
+{
+    XMMATRIX World;
+    XMMATRIX WorldInverseTranspose;
+    XMMATRIX WorldViewProj;
+};
+
+struct PSPerFrameConstantBuffer
+{
+    DirectionalLight DirLight;
+    XMFLOAT3 EyePosW;
+};
+
+struct PSPerObjectConstantBuffer
+{
+    Material Mat;
+};

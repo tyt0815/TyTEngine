@@ -12,6 +12,7 @@ public:
 	static T Clamp(const T& X, const T& Low, const T& High);
 	static UINT Min(UINT A, UINT B);
 	static float AngleFromXY(float A, float B);
+	static XMMATRIX InverseTranspose(CXMMATRIX Matrix);
 };
 
 template<typename T>
