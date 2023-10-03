@@ -1,5 +1,4 @@
 #include "LightHelper.hlsl"
-#include "MathHelper.hlsl"
 
 cbuffer PerFrame : register(b0)
 {
@@ -39,6 +38,11 @@ float4 PSMain(VertexOut PIn) : SV_TARGET
 	Specular += SpecularOut;
 
 	ComputePointLight(gMaterial, gPointLight, PIn.PosW, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
+	Ambient += AmbientOut;
+	Diffuse += DiffuseOut;
+	Specular += SpecularOut;
+
+	ComputeSpotLight(gMaterial, gSpotLight, PIn.PosW, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
 	Ambient += AmbientOut;
 	Diffuse += DiffuseOut;
 	Specular += SpecularOut;

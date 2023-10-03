@@ -18,14 +18,15 @@ CObjectManager::CObjectManager()
 	mPointLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mPointLight.Position = {};
 	mPointLight.Range = 15.f;
-	mPointLight.Attenuation = XMFLOAT3(1.f, 1.f, 1.f);
+	mPointLight.Attenuation = XMFLOAT3(1.f, .1f, 0.01f);
 	mSpotLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	mSpotLight.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mSpotLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mSpotLight.Position = {0.f, 5.f, 0.f};
-	mSpotLight.Range = 15.f;
-	mSpotLight.Attenuation = XMFLOAT3(1.f, 1.f, 1.f);
-	mSpotLight.Direction = { 0.f, -1.f, 0.f };
+	mSpotLight.Position = {3.f, 3.f, 0.f};
+	mSpotLight.Range = 50.f;
+	mSpotLight.Attenuation = XMFLOAT3(1.f, .1f, 0.01f);
+	mSpotLight.Direction = NormalizeXMFLOAT3(XMFLOAT3(-1.f, -1.f, 0.f));
+	mSpotLight.Spot = 1.f;
 }
 
 CObjectManager::~CObjectManager()

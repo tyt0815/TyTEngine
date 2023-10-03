@@ -23,7 +23,7 @@ struct SpotLight
 	float4 Ambient;
 	float4 Diffuse;
 	float4 Specular;
-	float3 Postion;
+    float3 Position;
 	float Range;
 	float3 Direction;
 	float Spot;
@@ -35,13 +35,13 @@ struct Material
 {
 	float4 Ambient;
 	float4 Diffuse;
-	float4 Specular;	// w´Â spec ÆÄ¿ö
+	float4 Specular;	// wï¿½ï¿½ spec ï¿½Ä¿ï¿½
 	float4 Reflect;
 };
 
 void ComputeDirectionalLight(
 	Material Mat,
-	DirectionalLight DirLit,
+	DirectionalLight Lit,
 	float3 Normal, float3 ToEye,
 	out float4 Ambient,
 	out float4 Diffuse,
@@ -52,25 +52,25 @@ void ComputeDirectionalLight(
 	Diffuse = float4( 0.f, 0.f, 0.f, 0.f );
 	Specular = float4( 0.f, 0.f, 0.f, 0.f );
 
-	float3 LightVector = -DirLit.Direction;
+	float3 LightVector = -Lit.Direction;
 
-	Ambient = Mat.Ambient * DirLit.Ambient;
+	Ambient = Mat.Ambient * Lit.Ambient;
 
 	float DiffuseFactor = dot(LightVector, Normal);
-	[Flatten]
+	[flatten]
 	if (DiffuseFactor > 0.f)
 	{
-		float3 v = reflect(-LightVector, Normal);	// ¹Ý»ç¹æÇâÀ» °è»êÇÏ´Â ÇÔ¼ö
+		float3 v = reflect(-LightVector, Normal);	// ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 		float4 SpecularFactor = pow(max(dot(v, ToEye), 0.f), Mat.Specular.w);
 
-		Diffuse = DiffuseFactor * Mat.Diffuse * DirLit.Diffuse;
-		Specular = SpecularFactor * Mat.Specular * DirLit.Specular;
+		Diffuse = DiffuseFactor * Mat.Diffuse * Lit.Diffuse;
+		Specular = SpecularFactor * Mat.Specular * Lit.Specular;
 	}
 }
 
 void ComputePointLight(
 	Material Mat,
-	PointLight PointLit,
+	PointLight Lit,
 	float3 Pos, float3 Normal, float3 ToEye,
 	out float4 Ambient,
 	out float4 Diffuse,
@@ -81,31 +81,74 @@ void ComputePointLight(
 	Diffuse = float4(0.f, 0.f, 0.f, 0.f);
 	Specular = float4(0.f, 0.f, 0.f, 0.f);
 
-	float3 LightVector = PointLit.Position - Pos;
+	float3 LightVector = Lit.Position - Pos;
 
 	float Distance = length(LightVector);
 
-	if (Distance > PointLit.Range)
+	if (Distance > Lit.Range)
 	{
 		return;
 	}
 
 	LightVector /= Distance;
 
-	Ambient = Mat.Ambient * PointLit.Ambient;
+	Ambient = Mat.Ambient * Lit.Ambient;
 
 	float DiffuseFactor = dot(LightVector, Normal);
-	[Flatten]
+	[flatten]
 	if (DiffuseFactor > 0.f)
 	{
-		float3 v = reflect(-LightVector, Normal);	// ¹Ý»ç¹æÇâÀ» °è»êÇÏ´Â ÇÔ¼ö
+        float3 v = reflect(-LightVector, Normal); // ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
+        float4 SpecularFactor = pow(max(dot(v, ToEye), 0.f), Mat.Specular.w);
+
+        Diffuse = DiffuseFactor * Mat.Diffuse * Lit.Diffuse;
+        Specular = SpecularFactor * Mat.Specular * Lit.Specular;
+
+        float Attenuation = 1.f / dot(Lit.Attenuation, float3(1.f, Distance, Distance * Distance));
+        Diffuse *= Attenuation;
+        Specular *= Attenuation;
+    }
+}
+
+void ComputeSpotLight(
+	Material Mat,
+	SpotLight Lit,
+	float3 Pos, float3 Normal, float3 ToEye,
+	out float4 Ambient,
+	out float4 Diffuse,
+	out float4 Specular
+)
+{
+	Ambient = float4(0.f, 0.f, 0.f, 0.f);
+	Diffuse = float4(0.f, 0.f, 0.f, 0.f);
+	Specular = float4(0.f, 0.f, 0.f, 0.f);
+	
+	float3 LightVector = Lit.Position - Pos;
+	float Distance = length(LightVector);
+
+	if (Distance > Lit.Range)
+	{
+		return;
+	}
+
+	LightVector /= Distance;
+
+	Ambient = Mat.Ambient * Lit.Ambient;
+
+	float DiffuseFactor = dot(LightVector, Normal);
+	float Spot = pow(max(dot(-LightVector, Lit.Direction), 0.f), Lit.Spot);
+	[flatten]
+	if(DiffuseFactor > 0.f)
+	{
+        float3 v = reflect(-LightVector, Normal);
 		float4 SpecularFactor = pow(max(dot(v, ToEye), 0.f), Mat.Specular.w);
 
-		Diffuse = DiffuseFactor * Mat.Diffuse * PointLit.Diffuse;
-		Specular = SpecularFactor * Mat.Specular * PointLit.Specular;
+		Diffuse = DiffuseFactor * Mat.Diffuse * Lit.Diffuse;
+		Specular = SpecularFactor * Mat.Specular * Lit.Specular;
 
-		float Attenuation = 1.f / dot(PointLit.Attenuation, float3(1.f, Distance, Distance * Distance));
+		float Attenuation = Spot / dot(Lit.Attenuation, float3(1.f, Distance, Distance * Distance));
 		Diffuse *= Attenuation;
 		Specular *= Attenuation;
 	}
+	Ambient *= Spot;
 }

@@ -121,8 +121,5 @@
     <None Include="VertexShader.hlsl">
       <Filter>Shader</Filter>
     </None>
-    <None Include="MathHelper.hlsl">
-      <Filter>Shader</Filter>
-    </None>
   </ItemGroup>
 </Project>
