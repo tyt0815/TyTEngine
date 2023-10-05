@@ -15,13 +15,14 @@ private:
 	CObjectManager();
 	~CObjectManager();
 
-	void CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color);
-	void CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color);
-	void CreateCylinderObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color,
+	void CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location);
+	void CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location);
+	void CreateCylinderObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location,
 		float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount);
-	void CreateGeoSphereObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color, float Radius, UINT NumSubdivisions);
+	void CreateGeoSphereObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, float Radius, UINT NumSubdivisions);
 	void PushObjectBuffers(std::vector<Vertex> CubeVertex, std::vector<UINT> CubeIndex,
-		const DirectX::XMFLOAT3 Scale, const DirectX::XMFLOAT3 Rotation, const DirectX::XMFLOAT3 Location, XMVECTORF32 Color);
+		const DirectX::XMFLOAT3 Scale, const DirectX::XMFLOAT3 Rotation, const DirectX::XMFLOAT3 Location,
+		const WCHAR* TextureFileName = L"Textures/default.dds");
 	float GetHillHeight(float x, float z);
 	XMFLOAT3 GetHilNormal(float x, float z);
 	XMFLOAT3 NormalizeXMFLOAT3(XMFLOAT3 Input);

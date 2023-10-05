@@ -2,12 +2,19 @@
 #include "Object.h"
 #include "Core.h"
 
-OObject::OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indices, size_t IndicesSize, XMVECTORF32 Color) :
+OObject::OObject(
+	vector<Vertex> Vertices,
+	size_t VerticesSize,
+	vector<UINT> Indices,
+	size_t IndicesSize,
+	const WCHAR* TextureFileName
+) :
 	mNumIndex(UINT(IndicesSize / sizeof(UINT))),
 	mScale({1,1,1}),
 	mRotation({0,0,0}),
 	mLocation({0,0,0})
 {
+	ID3D11Device* Device = CCore::GetInstance()->GetD3DDevice();
 	D3D11_BUFFER_DESC VertexBufferDesc;
 	ZeroMemory(&VertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -18,7 +25,7 @@ OObject::OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indi
 	VertexBufferDesc.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA VertexInitData;
 	VertexInitData.pSysMem = &Vertices[0];
-	HR(CCore::GetInstance()->CreateD3D11Buffer(&VertexBufferDesc, &VertexInitData, &mVertexBuffer));
+	HR(Device->CreateBuffer(&VertexBufferDesc, &VertexInitData, &mVertexBuffer));
 
 	D3D11_BUFFER_DESC IndexBufferDesc;
 	ZeroMemory(&IndexBufferDesc, sizeof(D3D11_BUFFER_DESC));
@@ -30,20 +37,27 @@ OObject::OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indi
 	IndexBufferDesc.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA IndexInitData;
 	IndexInitData.pSysMem = &Indices[0];
-	HR(CCore::GetInstance()->CreateD3D11Buffer(&IndexBufferDesc, &IndexInitData, &mIndexBuffer));
-	
-	XMStoreFloat4(&mMaterial.Ambient, Color.v);
-	XMStoreFloat4(&mMaterial.Diffuse, Color.v);
-	XMStoreFloat4(&mMaterial.Specular, Color.v);
-	mMaterial.Diffuse.w = .0f;
-	mMaterial.Specular.w=8;
+	HR(Device->CreateBuffer(&IndexBufferDesc, &IndexInitData, &mIndexBuffer));
+
+	mMaterial.Ambient = { 1.f, 1.f,1.f,1.f };
+	mMaterial.Diffuse = { .5f, .5f,.5f,1.f };
+	mMaterial.Specular = { .1f, .1f,.1f,1.f };
 	mMaterial.Reflect = {};
+
+	ScratchImage TexImg;
+	ScratchImage DecImg;
+	ScratchImage MipCh;
+	HR(LoadFromDDSFile(TextureFileName, DDS_FLAGS::DDS_FLAGS_NONE, nullptr, TexImg));
+	Decompress(TexImg.GetImages(), TexImg.GetImageCount(), TexImg.GetMetadata(), DXGI_FORMAT_UNKNOWN, DecImg);
+	HR(GenerateMipMaps(DecImg.GetImages(), DecImg.GetImageCount(), DecImg.GetMetadata(), TEX_FILTER_DEFAULT, 0, MipCh));
+	HR(CreateShaderResourceView(Device, MipCh.GetImages(), MipCh.GetImageCount(), MipCh.GetMetadata(), &mTextureView));
 }
 
 OObject::~OObject()
 {
 	ReleaseCOM(mVertexBuffer);
 	ReleaseCOM(mIndexBuffer);
+	ReleaseCOM(mTextureView);
 }
 
 XMMATRIX OObject::GetWorldMatrix()

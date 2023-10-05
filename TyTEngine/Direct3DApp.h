@@ -72,4 +72,7 @@ protected:
 	ID3D11DepthStencilView* mDepthStencilView;
 	ID3D11Texture2D* mDepthStencilBuffer;
 	D3D11_VIEWPORT* mScreenViewport;
+
+public:
+	ID3D11Device* GetD3DDevice() const { return md3dDevice; }
 };

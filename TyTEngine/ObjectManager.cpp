@@ -5,15 +5,16 @@
 
 CObjectManager::CObjectManager()
 {
-	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { 2,0,0 }, Colors::Red);
-	CreateCylinderObject({ 1,1,1 }, { 0,0,0 }, { -2,0,0 }, Colors::Green, 1, 1, 2, 128, 1);
-	CreateGeoSphereObject({ 1,1,1 }, { 0,0,0 }, { 0,2,0 }, Colors::Blue, 1, 5);
+	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { 2,0,0 });
+	CreateCylinderObject({ 1,1,1 }, { 0,0,0 }, { -2,0,0 }, 1, 1, 2, 128, 1);
+	CreateGeoSphereObject({ 1,1,1 }, { 0,0,0 }, { 0,2,0 }, 1, 5);
+	CreateGridHillObject({ 1, 1, 1 }, { 0, 0, 0 }, { 0,-5,0 });
 
 	mDirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	mDirLight.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mDirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mDirLight.Direction = NormalizeXMFLOAT3(XMFLOAT3(1.f, -1.f, 0.f));
-	mPointLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mPointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	mPointLight.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mPointLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mPointLight.Position = {};
@@ -26,7 +27,7 @@ CObjectManager::CObjectManager()
 	mSpotLight.Range = 50.f;
 	mSpotLight.Attenuation = XMFLOAT3(1.f, .1f, 0.01f);
 	mSpotLight.Direction = NormalizeXMFLOAT3(XMFLOAT3(-1.f, -1.f, 0.f));
-	mSpotLight.Spot = 1.f;
+	mSpotLight.Spot = 16.f;
 }
 
 CObjectManager::~CObjectManager()
@@ -34,7 +35,7 @@ CObjectManager::~CObjectManager()
 	mObjects.clear();
 }
 
-void CObjectManager::CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color)
+void CObjectManager::CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location)
 {
 
 	OGeometryGenerator::MeshData Cube;
@@ -44,22 +45,12 @@ void CObjectManager::CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotat
 	{
 		CubeVertices[i].Pos = Cube.Vertices[i].Position;
 		CubeVertices[i].Normal = Cube.Vertices[i].Normal;
+		CubeVertices[i].UV = Cube.Vertices[i].TexC;
 	}
-	PushObjectBuffers(CubeVertices, Cube.Indices, Scale, Rotation, Location, Color);
+	PushObjectBuffers(CubeVertices, Cube.Indices, Scale, Rotation, Location, L"Textures/WoodCrate01.dds");
 }
 
-void CObjectManager::PushObjectBuffers(
-	std::vector<Vertex> Vertices, std::vector<UINT> Indices,
-	const DirectX::XMFLOAT3 Scale, const DirectX::XMFLOAT3 Rotation, const DirectX::XMFLOAT3 Location, XMVECTORF32 Color
-)
-{
-	mObjects.push_back(make_unique<OObject>(Vertices, sizeof(Vertex) * Vertices.size(), Indices, sizeof(UINT) * Indices.size(), Color));
-	mObjects.back()->mScale = Scale;
-	mObjects.back()->mRotation = Rotation;
-	mObjects.back()->mLocation = Location;
-}
-
-void CObjectManager::CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color)
+void CObjectManager::CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location)
 {
 	OGeometryGenerator::MeshData Grid;
 	OGeometryGenerator::CreateGrid(500.f, 500.f, 50, 50, Grid);
@@ -71,15 +62,15 @@ void CObjectManager::CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 R
 		XMFLOAT3 Normal = GetHilNormal(Pos.x, Pos.y);
 		GridVertices[i].Pos = Pos;
 		GridVertices[i].Normal = Normal;
+		GridVertices[i].UV = Grid.Vertices[i].TexC;
 	}
-	PushObjectBuffers(GridVertices, Grid.Indices, Scale, Rotation, Location, Color);
+	PushObjectBuffers(GridVertices, Grid.Indices, Scale, Rotation, Location, L"Textures/grass.dds");
 }
 
 void CObjectManager::CreateCylinderObject(
 	const XMFLOAT3 Scale,
 	const XMFLOAT3 Rotation,
 	const XMFLOAT3 Location,
-	const XMVECTORF32 Color,
 	float BottomRadius,
 	float TopRadius,
 	float Height,
@@ -100,12 +91,14 @@ void CObjectManager::CreateCylinderObject(
 	CylinderVertices.resize(Cylinder.Vertices.size());
 	for (int i = 0; i < Cylinder.Vertices.size(); ++i)
 	{
-		CylinderVertices[i] = { Cylinder.Vertices[i].Position, Cylinder.Vertices[i].Normal};
+		CylinderVertices[i].Pos = Cylinder.Vertices[i].Position;
+		CylinderVertices[i].Normal = Cylinder.Vertices[i].Normal;
+		CylinderVertices[i].UV = Cylinder.Vertices[i].TexC;
 	}
-	PushObjectBuffers(CylinderVertices, Cylinder.Indices, Scale, Rotation, Location, Color);
+	PushObjectBuffers(CylinderVertices, Cylinder.Indices, Scale, Rotation, Location, L"Textures/darkbrickdxt1.dds");
 }
 
-void CObjectManager::CreateGeoSphereObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, const XMVECTORF32 Color, float Radius, UINT NumSubdivisions)
+void CObjectManager::CreateGeoSphereObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location, float Radius, UINT NumSubdivisions)
 {
 	OGeometryGenerator::MeshData Sphere;
 	OGeometryGenerator::CreateGeosphere(Radius, NumSubdivisions, Sphere);
@@ -113,9 +106,23 @@ void CObjectManager::CreateGeoSphereObject(const XMFLOAT3 Scale, const XMFLOAT3 
 	SphereVertices.resize(Sphere.Vertices.size());
 	for (int i = 0; i < Sphere.Vertices.size(); ++i)
 	{
-		SphereVertices[i] = { Sphere.Vertices[i].Position, Sphere.Vertices[i].Normal};
+		SphereVertices[i].Pos = Sphere.Vertices[i].Position;
+		SphereVertices[i].Normal = Sphere.Vertices[i].Normal;
+		SphereVertices[i].UV = Sphere.Vertices[i].TexC;
 	}
-	PushObjectBuffers(SphereVertices, Sphere.Indices, Scale, Rotation, Location, Color);
+	PushObjectBuffers(SphereVertices, Sphere.Indices, Scale, Rotation, Location, L"Textures/moon.dds");
+}
+
+void CObjectManager::PushObjectBuffers(
+	std::vector<Vertex> Vertices, std::vector<UINT> Indices,
+	const DirectX::XMFLOAT3 Scale, const DirectX::XMFLOAT3 Rotation, const DirectX::XMFLOAT3 Location,
+	const WCHAR* TextureFileName
+)
+{
+	mObjects.push_back(make_unique<OObject>(Vertices, sizeof(Vertex) * Vertices.size(), Indices, sizeof(UINT) * Indices.size(), TextureFileName));
+	mObjects.back()->mScale = Scale;
+	mObjects.back()->mRotation = Rotation;
+	mObjects.back()->mLocation = Location;
 }
 
 float CObjectManager::GetHillHeight(float x, float z)

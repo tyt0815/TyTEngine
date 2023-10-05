@@ -1,5 +1,15 @@
 #include "LightHelper.hlsl"
 
+Texture2D T2D : register(t0);
+SamplerState SmpState
+{
+    Filter = ANISOTROPIC;
+    MaxAnisotropy = 4;
+
+    AddressU = WRAP;
+    AddressV = WRAP;
+};
+
 cbuffer PerFrame : register(b0)
 {
 	DirectionalLight gDirLight;
@@ -15,14 +25,16 @@ cbuffer PerObject : register(b1)
 
 struct VertexOut
 {
-	float4 PosH : SV_POSITION;
-	float3 PosW : POSITION;
-	float3 NormalW : NORMAL;
-	float4 Color : COLOR;
+    float4 PosH : SV_POSITION;
+    float3 PosW : POSITION;
+    float3 NormalW : NORMAL;
+    float2 UV : TEXCOORD;
 };
 
 float4 PSMain(VertexOut PIn) : SV_TARGET
-{
+{	
+    float4 TexColor = T2D.Sample(SmpState, PIn.UV);
+	
 	PIn.NormalW = normalize(PIn.NormalW);
 	float3 ToEyeW = normalize(gEyePosW - PIn.PosW);
 	
@@ -47,7 +59,7 @@ float4 PSMain(VertexOut PIn) : SV_TARGET
 	Diffuse += DiffuseOut;
 	Specular += SpecularOut;
 
-	float4 LitColor = Ambient + Diffuse + Specular;
+    float4 LitColor = TexColor * (Ambient + Diffuse) + Specular;
 	LitColor.a = gMaterial.Diffuse.a;
 	return LitColor;
 }

@@ -98,6 +98,7 @@ void CCore::DrawScene()
 
 		md3dDeviceContext->IASetVertexBuffers(0, 1, &(Objects[i]->mVertexBuffer), &Stride, &Offset);
 		md3dDeviceContext->IASetIndexBuffer(Objects[i]->mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		md3dDeviceContext->PSSetShaderResources(0, 1, &Objects[i]->mTextureView);
 		md3dDeviceContext->DrawIndexed(Objects[i]->mNumIndex, 0, 0);
 	}
 
@@ -178,11 +179,6 @@ void CCore::OnMouseMove(WPARAM BtnState, int x, int y)
 	mLastMousePos.y = y;
 }
 
-HRESULT CCore::CreateD3D11Buffer(D3D11_BUFFER_DESC* BufferDesc, D3D11_SUBRESOURCE_DATA* InitData, ID3D11Buffer** Buffer)
-{
-	return md3dDevice->CreateBuffer(BufferDesc, InitData, Buffer);
-}
-
 void CCore::BuildConstantBuffer()
 {
 	D3D11_BUFFER_DESC VSPerObjectConstantBufferDesc = {};
@@ -223,8 +219,9 @@ void CCore::BuildVertexLayout()
 		D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,
 		D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24,
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24,
 		D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	HR(md3dDevice->CreateInputLayout(VertexDesc, ARRAYSIZE(VertexDesc), mVSBlob->GetBufferPointer(), mVSBlob->GetBufferSize(), &mInputLayout));
 }
+

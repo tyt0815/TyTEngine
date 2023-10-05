@@ -1,4 +1,3 @@
-
 cbuffer PerObject : register(b1)
 {
 	float4x4 gWorld;
@@ -10,7 +9,7 @@ struct VertexIn
 {
 	float3 PosL : POSITION;
 	float3 NormalL : NORMAL;
-	float4 Color : COLOR;
+    float2 UV : TEXCOORD;
 };
 
 struct VertexOut
@@ -18,7 +17,7 @@ struct VertexOut
 	float4 PosH : SV_POSITION;
 	float3 PosW : POSITION;
 	float3 NormalW : NORMAL;
-	float4 Color : COLOR;
+    float2 UV : TEXCOORD;
 };
 
 VertexOut VSMain(VertexIn VIn)
@@ -27,6 +26,6 @@ VertexOut VSMain(VertexIn VIn)
 	VOut.PosH = mul(float4(VIn.PosL, 1.f), gWorldViewProj);
 	VOut.PosW = mul(float4(VIn.PosL, 1.f), gWorld).xyz;
 	VOut.NormalW = mul(float4(VIn.NormalL, 0.f), gWorldInverseTranspose).xyz;
-	VOut.Color = VIn.Color;
+    VOut.UV = VIn.UV;
 	return VOut;
 }

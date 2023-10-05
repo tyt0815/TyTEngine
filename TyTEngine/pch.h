@@ -12,6 +12,8 @@
 #include <dxgi.h>
 #include <DirectXMath.h>
 
+#include <DirectXTex/DirectXTex.h>
+
 #include "DirectXUtil.h"
 #include "MathHelper.h"
 #include "CommonUtility.h"
@@ -24,6 +26,7 @@ struct Vertex
 {
     XMFLOAT3 Pos;
     XMFLOAT3 Normal;
+    XMFLOAT2 UV;
 };
 
 struct VSPerObjectConstantBuffer
