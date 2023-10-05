@@ -201,6 +201,16 @@ void CCore::BuildConstantBuffer()
 	PSPerObjectConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	PSPerObjectConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	HR(md3dDevice->CreateBuffer(&PSPerObjectConstantBufferDesc, nullptr, &mPSPerObjectConstantBuffer));
+
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	SamplerDesc.MaxAnisotropy = 4;
+	ID3D11SamplerState* SamplerState = {};
+	md3dDevice->CreateSamplerState(&SamplerDesc, &SamplerState);
+	md3dDeviceContext->PSSetSamplers(0, 1, &SamplerState);
 }
 
 void CCore::BuildShader()

@@ -53,7 +53,7 @@ void CObjectManager::CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotat
 void CObjectManager::CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location)
 {
 	OGeometryGenerator::MeshData Grid;
-	OGeometryGenerator::CreateGrid(500.f, 500.f, 50, 50, Grid);
+	OGeometryGenerator::CreateGrid(500, 500.f, 500, 500, Grid);
 	vector<Vertex> GridVertices(Grid.Vertices.size());
 	for (size_t i = 0; i < Grid.Vertices.size(); ++i)
 	{

@@ -109,8 +109,8 @@ void OGeometryGenerator::CreateGrid(float Width, float Depth, UINT m, UINT n, Me
 			Mesh.Vertices[i * n + j].Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 			Mesh.Vertices[i * n + j].TangentU = XMFLOAT3(1.0f, 0.0f, 0.0f);
 			// Ignore for now, used for texturing.
-			Mesh.Vertices[i * n + j].TexC.x = j * du;
-			Mesh.Vertices[i * n + j].TexC.y = i * dv;
+			Mesh.Vertices[i * n + j].TexC.x = x / 15;
+			Mesh.Vertices[i * n + j].TexC.y = z / 15;
 		}
 	}
 

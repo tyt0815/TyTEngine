@@ -40,7 +40,7 @@ OObject::OObject(
 	HR(Device->CreateBuffer(&IndexBufferDesc, &IndexInitData, &mIndexBuffer));
 
 	mMaterial.Ambient = { 1.f, 1.f,1.f,1.f };
-	mMaterial.Diffuse = { .5f, .5f,.5f,1.f };
+	mMaterial.Diffuse = { 1.f, 1.f,1.f,1.f };
 	mMaterial.Specular = { .1f, .1f,.1f,1.f };
 	mMaterial.Reflect = {};
 
@@ -50,6 +50,11 @@ OObject::OObject(
 	HR(LoadFromDDSFile(TextureFileName, DDS_FLAGS::DDS_FLAGS_NONE, nullptr, TexImg));
 	Decompress(TexImg.GetImages(), TexImg.GetImageCount(), TexImg.GetMetadata(), DXGI_FORMAT_UNKNOWN, DecImg);
 	HR(GenerateMipMaps(DecImg.GetImages(), DecImg.GetImageCount(), DecImg.GetMetadata(), TEX_FILTER_DEFAULT, 0, MipCh));
+	const Image* imgs = MipCh.GetImages();
+	for (int i = 0; i < MipCh.GetImageCount(); ++i)
+	{
+		imgs[i];
+	}
 	HR(CreateShaderResourceView(Device, MipCh.GetImages(), MipCh.GetImageCount(), MipCh.GetMetadata(), &mTextureView));
 }
 

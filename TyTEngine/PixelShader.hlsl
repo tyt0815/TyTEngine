@@ -1,14 +1,7 @@
 #include "LightHelper.hlsl"
 
 Texture2D T2D : register(t0);
-SamplerState SmpState
-{
-    Filter = ANISOTROPIC;
-    MaxAnisotropy = 4;
-
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
+SamplerState SmpState : register(s0);
 
 cbuffer PerFrame : register(b0)
 {
