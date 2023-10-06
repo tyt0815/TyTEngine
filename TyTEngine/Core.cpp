@@ -93,6 +93,7 @@ void CCore::DrawScene()
 	vector<unique_ptr<OObject>>& Objects = CObjectManager::GetInstance()->mObjects;
 	for (int i = 0; i < Objects.size(); ++i)
 	{
+		Objects[i]->Update(mTimer->DeltaTime());
 		VSPerObjectConstantBufferUpdate(Objects[i]);
 		PSPerObjectConstantBufferUpdate(Objects[i]);
 
@@ -117,6 +118,7 @@ void CCore::VSPerObjectConstantBufferUpdate(unique_ptr<OObject>& Object)
 	ConstantBuffer->World = XMMatrixTranspose(WorldMat);
 	ConstantBuffer->WorldInverseTranspose = XMMatrixTranspose(UMathHelper::InverseTranspose(WorldMat));
 	ConstantBuffer->WorldViewProj = XMMatrixTranspose(WorldMat * ViewMat * ProjMat);
+	ConstantBuffer->TexTransform = XMMatrixTranspose(Object->GetTexTransform());
 	md3dDeviceContext->Unmap(mVSPerObjectConstantBuffer, 0);
 	md3dDeviceContext->VSSetConstantBuffers(1, 1, &mVSPerObjectConstantBuffer);
 }
@@ -203,14 +205,19 @@ void CCore::BuildConstantBuffer()
 	HR(md3dDevice->CreateBuffer(&PSPerObjectConstantBufferDesc, nullptr, &mPSPerObjectConstantBuffer));
 
 	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	SamplerDesc.MaxAnisotropy = 4;
-	ID3D11SamplerState* SamplerState = {};
-	md3dDevice->CreateSamplerState(&SamplerDesc, &SamplerState);
-	md3dDeviceContext->PSSetSamplers(0, 1, &SamplerState);
+	SamplerDesc.MipLODBias = 0.f;
+	SamplerDesc.MaxAnisotropy = 1;
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	SamplerDesc.BorderColor;
+	SamplerDesc.MinLOD = FLT_MIN;
+	SamplerDesc.MaxLOD = FLT_MAX;
+
+	md3dDevice->CreateSamplerState(&SamplerDesc, &mSamplerState);
+	md3dDeviceContext->PSSetSamplers(0, 1, &mSamplerState);
 }
 
 void CCore::BuildShader()

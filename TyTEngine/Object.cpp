@@ -10,9 +10,13 @@ OObject::OObject(
 	const WCHAR* TextureFileName
 ) :
 	mNumIndex(UINT(IndicesSize / sizeof(UINT))),
+	mLifeTime(0),
 	mScale({1,1,1}),
 	mRotation({0,0,0}),
-	mLocation({0,0,0})
+	mLocation({0,0,0}),
+	mTexScale({1.f,1.f,1.f}),
+	mTexTranslation({0.f,0.f,0.f}),
+	mTexVelocity({ 0.f,0.f,0.f })
 {
 	ID3D11Device* Device = CCore::GetInstance()->GetD3DDevice();
 	D3D11_BUFFER_DESC VertexBufferDesc;
@@ -50,11 +54,6 @@ OObject::OObject(
 	HR(LoadFromDDSFile(TextureFileName, DDS_FLAGS::DDS_FLAGS_NONE, nullptr, TexImg));
 	Decompress(TexImg.GetImages(), TexImg.GetImageCount(), TexImg.GetMetadata(), DXGI_FORMAT_UNKNOWN, DecImg);
 	HR(GenerateMipMaps(DecImg.GetImages(), DecImg.GetImageCount(), DecImg.GetMetadata(), TEX_FILTER_DEFAULT, 0, MipCh));
-	const Image* imgs = MipCh.GetImages();
-	for (int i = 0; i < MipCh.GetImageCount(); ++i)
-	{
-		imgs[i];
-	}
 	HR(CreateShaderResourceView(Device, MipCh.GetImages(), MipCh.GetImageCount(), MipCh.GetMetadata(), &mTextureView));
 }
 
@@ -63,6 +62,12 @@ OObject::~OObject()
 	ReleaseCOM(mVertexBuffer);
 	ReleaseCOM(mIndexBuffer);
 	ReleaseCOM(mTextureView);
+}
+
+void OObject::Update(float DeltaTime)
+{
+	mLifeTime += DeltaTime;
+	XMStoreFloat3(&mTexTranslation, (XMLoadFloat3(&mTexVelocity) * mLifeTime));
 }
 
 XMMATRIX OObject::GetWorldMatrix()
@@ -98,4 +103,12 @@ XMMATRIX OObject::GetWorldMatrix()
 	};
 
 	return ScaleMat * RotationMat * TranslationMat;
+}
+
+XMMATRIX OObject::GetTexTransform()
+{
+	XMMATRIX Scale = XMMatrixScalingFromVector(XMLoadFloat3(&mTexScale));
+	XMMATRIX Translation = XMMatrixTranslationFromVector(XMLoadFloat3(&mTexTranslation));
+	XMMATRIX Result = Scale * Translation;
+	return Result;
 }

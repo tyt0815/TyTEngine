@@ -21,6 +21,7 @@ public:
 	virtual void OnMouseUp(WPARAM BtnState, int x, int y) override;
 	virtual void OnMouseMove(WPARAM BtnState, int x, int y) override;
 
+
 private:
 	CCore();
 	~CCore();
@@ -38,8 +39,9 @@ private:
 	ID3D11VertexShader* mVertexShader;
 	ID3DBlob* mPSBlob;
 	ID3D11PixelShader* mPixelShader;
+	ID3D11SamplerState* mSamplerState;
 
-
+	
 	
 	XMFLOAT4X4 mViewMat;
 	XMFLOAT4X4 mProjMat;

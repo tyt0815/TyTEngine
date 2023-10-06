@@ -8,7 +8,8 @@ CObjectManager::CObjectManager()
 	CreateCubeObject({ 1,1,1 }, { 0,0,0 }, { 2,0,0 });
 	CreateCylinderObject({ 1,1,1 }, { 0,0,0 }, { -2,0,0 }, 1, 1, 2, 128, 1);
 	CreateGeoSphereObject({ 1,1,1 }, { 0,0,0 }, { 0,2,0 }, 1, 5);
-	CreateGridHillObject({ 1, 1, 1 }, { 0, 0, 0 }, { 0,-5,0 });
+	CreateGridHillObject({ 1, 1, 1 }, { 0, 0, 0 }, { 0,-5,0 }, 500, 500, 500, 500);
+	CreateGridWaterObject({ 1, 1, 1 }, { 0, 0, 0 }, { 0,-5,0 }, 500, 500, 500, 500);
 
 	mDirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	mDirLight.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -23,7 +24,7 @@ CObjectManager::CObjectManager()
 	mSpotLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	mSpotLight.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mSpotLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mSpotLight.Position = {3.f, 3.f, 0.f};
+	mSpotLight.Position = { 3.f, 3.f, 0.f };
 	mSpotLight.Range = 50.f;
 	mSpotLight.Attenuation = XMFLOAT3(1.f, .1f, 0.01f);
 	mSpotLight.Direction = NormalizeXMFLOAT3(XMFLOAT3(-1.f, -1.f, 0.f));
@@ -48,23 +49,6 @@ void CObjectManager::CreateCubeObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotat
 		CubeVertices[i].UV = Cube.Vertices[i].TexC;
 	}
 	PushObjectBuffers(CubeVertices, Cube.Indices, Scale, Rotation, Location, L"Textures/WoodCrate01.dds");
-}
-
-void CObjectManager::CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location)
-{
-	OGeometryGenerator::MeshData Grid;
-	OGeometryGenerator::CreateGrid(500, 500.f, 500, 500, Grid);
-	vector<Vertex> GridVertices(Grid.Vertices.size());
-	for (size_t i = 0; i < Grid.Vertices.size(); ++i)
-	{
-		XMFLOAT3 Pos = Grid.Vertices[i].Position;
-		Pos.y = GetHillHeight(Pos.x, Pos.z);
-		XMFLOAT3 Normal = GetHilNormal(Pos.x, Pos.y);
-		GridVertices[i].Pos = Pos;
-		GridVertices[i].Normal = Normal;
-		GridVertices[i].UV = Grid.Vertices[i].TexC;
-	}
-	PushObjectBuffers(GridVertices, Grid.Indices, Scale, Rotation, Location, L"Textures/grass.dds");
 }
 
 void CObjectManager::CreateCylinderObject(
@@ -113,6 +97,45 @@ void CObjectManager::CreateGeoSphereObject(const XMFLOAT3 Scale, const XMFLOAT3 
 	PushObjectBuffers(SphereVertices, Sphere.Indices, Scale, Rotation, Location, L"Textures/moon.dds");
 }
 
+void CObjectManager::CreateGridHillObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location,
+	float Width, float Depth, UINT NumHorizontalVertices, UINT NumVerticalVertices)
+{
+	OGeometryGenerator::MeshData Grid;
+	OGeometryGenerator::CreateGrid(Width, Depth, NumHorizontalVertices, NumVerticalVertices, Grid);
+	vector<Vertex> GridVertices(Grid.Vertices.size());
+	for (size_t i = 0; i < Grid.Vertices.size(); ++i)
+	{
+		XMFLOAT3 Pos = Grid.Vertices[i].Position;
+		Pos.y = GetHillHeight(Pos.x, Pos.z);
+		XMFLOAT3 Normal = GetGridNormal(Pos.x, Pos.y);
+		GridVertices[i].Pos = Pos;
+		GridVertices[i].Normal = Normal;
+		GridVertices[i].UV = Grid.Vertices[i].TexC;
+	}
+	PushObjectBuffers(GridVertices, Grid.Indices, Scale, Rotation, Location, L"Textures/grass.dds");
+	mObjects.back()->mTexScale = { Width / 15.f, Depth / 15.f, 0.f };
+}
+
+void CObjectManager::CreateGridWaterObject(const XMFLOAT3 Scale, const XMFLOAT3 Rotation, const XMFLOAT3 Location,
+	float Width, float Depth, UINT NumHorizontalVertices, UINT NumVerticalVertices)
+{
+	OGeometryGenerator::MeshData Grid;
+	OGeometryGenerator::CreateGrid(Width, Depth, NumHorizontalVertices, NumVerticalVertices, Grid);
+	vector<Vertex> GridVertices(Grid.Vertices.size());
+	for (size_t i = 0; i < Grid.Vertices.size(); ++i)
+	{
+		XMFLOAT3 Pos = Grid.Vertices[i].Position;
+		Pos.y = GetWaterHeight(Pos.x, Pos.z);
+		XMFLOAT3 Normal = GetGridNormal(Pos.x, Pos.y);
+		GridVertices[i].Pos = Pos;
+		GridVertices[i].Normal = Normal;
+		GridVertices[i].UV = Grid.Vertices[i].TexC;
+	}
+	PushObjectBuffers(GridVertices, Grid.Indices, Scale, Rotation, Location, L"Textures/water1.dds");
+	mObjects.back()->mTexScale = { Width / 30.f, Depth / 30.f, 0.f };
+	mObjects.back()->mTexVelocity = { 0.5f, 0.5, 0.f };
+}
+
 void CObjectManager::PushObjectBuffers(
 	std::vector<Vertex> Vertices, std::vector<UINT> Indices,
 	const DirectX::XMFLOAT3 Scale, const DirectX::XMFLOAT3 Rotation, const DirectX::XMFLOAT3 Location,
@@ -130,14 +153,19 @@ float CObjectManager::GetHillHeight(float x, float z)
 	return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z));
 }
 
-XMFLOAT3 CObjectManager::GetHilNormal(float x, float z)
+float CObjectManager::GetWaterHeight(float x, float z)
+{
+	return (sinf(0.1f * x) + cosf(0.1f * z));
+}
+
+XMFLOAT3 CObjectManager::GetGridNormal(float x, float z)
 {
 	XMFLOAT3 Normal = XMFLOAT3(
 		-0.3f * (0.1f * z * cosf(0.1f * x) + cosf(0.1f * z)),
 		1,
 		-0.3f * (sinf(0.1f * x) - 0.1f * x * sinf(0.1f * z))
 	);
-	
+
 	return NormalizeXMFLOAT3(Normal);
 }
 

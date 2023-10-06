@@ -34,6 +34,7 @@ struct VSPerObjectConstantBuffer
     XMMATRIX World;
     XMMATRIX WorldInverseTranspose;
     XMMATRIX WorldViewProj;
+    XMMATRIX TexTransform;
 };
 
 struct PSPerFrameConstantBuffer
