@@ -2,20 +2,21 @@
 
 #include "Direct3DApp.h"
 #include "CommonUtility.h"
-//#include "Object.h"
-class OObject;
 
-class CCore : public CDirect3DApp
+class TObject;
+
+class TEngine : public TDirect3DApp
 {
 public:
-	SINGLETON(CCore);
+	SINGLETON(TEngine);
 	bool Init(HINSTANCE hInstance, int CmdShow);
 	virtual void OnResize() override;
 	void UpdateScene(float dt);
 	void DrawScene();
-	void VSPerObjectConstantBufferUpdate(unique_ptr<OObject>& Object);
+	void ObjectsBeginPlay();
+	void VSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object);
 	void PSPerFrameConstantBufferUpdate();
-	void PSPerObjectConstantBufferUpdate(unique_ptr<OObject>& Object);
+	void PSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object);
 
 	virtual void OnMouseDown(WPARAM BtnState, int x, int y) override;
 	virtual void OnMouseUp(WPARAM BtnState, int x, int y) override;
@@ -23,13 +24,12 @@ public:
 
 
 private:
-	CCore();
-	~CCore();
+	TEngine();
+	~TEngine();
 	void BuildConstantBuffer();
 	void BuildShader();
 	void BuildVertexLayout();
-
-	POINT mLastMousePos;
+	void CreateObjects();
 
 	ID3D11InputLayout* mInputLayout;
 	ID3D11Buffer* mVSPerObjectConstantBuffer;
@@ -41,7 +41,7 @@ private:
 	ID3D11PixelShader* mPixelShader;
 	ID3D11SamplerState* mSamplerState;
 
-	
+	POINT mLastMousePos;
 	
 	XMFLOAT4X4 mViewMat;
 	XMFLOAT4X4 mProjMat;

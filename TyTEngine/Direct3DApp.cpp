@@ -6,7 +6,7 @@
 
 namespace
 {
-	CDirect3DApp* gD3DApp = nullptr;
+	TDirect3DApp* gD3DApp = nullptr;
 }
 
 LRESULT CALLBACK MainWndProc(HWND HWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
@@ -14,7 +14,7 @@ LRESULT CALLBACK MainWndProc(HWND HWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
 	return gD3DApp->WndProc(HWnd, Msg, WParam, LParam);
 }
 
-CDirect3DApp::CDirect3DApp() :
+TDirect3DApp::TDirect3DApp() :
 	mAppTitle(L"TyTEngine"),
 	mWindowClass(L"TyT"),
 	mhInst(0),
@@ -37,12 +37,12 @@ CDirect3DApp::CDirect3DApp() :
 	mMinimized(false),
 	mMaximized(false),
 	mResizing(false),
-	mTimer(new CGameTimer)
+	mTimer(new TGameTimer)
 {
 	gD3DApp = this;
 }
 
-CDirect3DApp::~CDirect3DApp()
+TDirect3DApp::~TDirect3DApp()
 {
 	ReleaseCOM(mRenderTargetView);
 	ReleaseCOM(mDepthStencilView);
@@ -58,7 +58,7 @@ CDirect3DApp::~CDirect3DApp()
 	delete mTimer;
 }
 
-bool CDirect3DApp::Init(HINSTANCE HInstance, int CmdShow)
+bool TDirect3DApp::Init(HINSTANCE HInstance, int CmdShow)
 {
 	mhInst = HInstance;
 	mCmdShow = CmdShow;
@@ -75,7 +75,7 @@ bool CDirect3DApp::Init(HINSTANCE HInstance, int CmdShow)
 	return true;
 }
 
-int CDirect3DApp::Run()
+int TDirect3DApp::Run()
 {
 	MSG msg = { 0 };
 	mTimer->Reset();
@@ -95,7 +95,7 @@ int CDirect3DApp::Run()
 	return (int)msg.wParam;
 }
 
-LRESULT CDirect3DApp::WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT TDirect3DApp::WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (Msg)
 	{
@@ -249,7 +249,7 @@ LRESULT CDirect3DApp::WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-bool CDirect3DApp::InitMainWindow()
+bool TDirect3DApp::InitMainWindow()
 {
 	AppRegisterClass();
 
@@ -264,7 +264,7 @@ bool CDirect3DApp::InitMainWindow()
 
 }
 
-bool CDirect3DApp::InitDirect3D()
+bool TDirect3DApp::InitDirect3D()
 {
 	UINT CreateDeviceFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)
@@ -402,7 +402,7 @@ bool CDirect3DApp::InitDirect3D()
 	return true;
 }
 
-void CDirect3DApp::OnResize()
+void TDirect3DApp::OnResize()
 {
 	assert(md3dDeviceContext);
 	assert(md3dDevice);
@@ -466,7 +466,7 @@ void CDirect3DApp::OnResize()
 	md3dDeviceContext->RSSetViewports(1, mScreenViewport);
 }
 
-void CDirect3DApp::CalculateFrameStats()
+void TDirect3DApp::CalculateFrameStats()
 {
 	// FPS 계산
 	static int FrameCnt = 0;
@@ -489,12 +489,12 @@ void CDirect3DApp::CalculateFrameStats()
 	}
 }
 
-float CDirect3DApp::GetAspectRatio()
+float TDirect3DApp::GetAspectRatio()
 {
 	return static_cast<float>(mClientWidth) / mClientHeight;
 }
 
-ATOM CDirect3DApp::AppRegisterClass()
+ATOM TDirect3DApp::AppRegisterClass()
 {
 	WNDCLASSEXW wcex;
 
@@ -515,7 +515,7 @@ ATOM CDirect3DApp::AppRegisterClass()
 	return RegisterClassExW(&wcex); // 윈도우가 제공하는 함수.
 }
 
-BOOL CDirect3DApp::InitInstance()
+BOOL TDirect3DApp::InitInstance()
 {
 	RECT R = { 0, 0, mClientWidth, mClientHeight };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
@@ -536,7 +536,7 @@ BOOL CDirect3DApp::InitInstance()
 	return TRUE;
 }
 
-void CDirect3DApp::Process()
+void TDirect3DApp::Process()
 {
 	mTimer->Tick();
 

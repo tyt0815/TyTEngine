@@ -57,7 +57,7 @@
     <ClCompile Include="GameTimer.cpp">
       <Filter>Engine\Core\Private</Filter>
     </ClCompile>
-    <ClCompile Include="Core.cpp">
+    <ClCompile Include="Engine.cpp">
       <Filter>Engine\Core\Private</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
@@ -66,14 +66,32 @@
     <ClCompile Include="MathHelper.cpp">
       <Filter>Engine\Utility\Private</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryGenerator.cpp">
-      <Filter>Object\Private</Filter>
-    </ClCompile>
     <ClCompile Include="LightHelper.cpp">
       <Filter>Engine\Utility\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>Engine\Utility\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Water.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Hill.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Cylinder.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Object\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,7 +104,7 @@
     <ClInclude Include="GameTimer.h">
       <Filter>Engine\Core\Public</Filter>
     </ClInclude>
-    <ClInclude Include="Core.h">
+    <ClInclude Include="Engine.h">
       <Filter>Engine\Core\Public</Filter>
     </ClInclude>
     <ClInclude Include="DirectXUtil.h">
@@ -98,17 +116,35 @@
     <ClInclude Include="Object.h">
       <Filter>Object\Public</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectManager.h">
-      <Filter>Engine\Core\Public</Filter>
-    </ClInclude>
     <ClInclude Include="CommonUtility.h">
       <Filter>Engine\Utility\Public</Filter>
     </ClInclude>
-    <ClInclude Include="GeometryGenerator.h">
-      <Filter>Object\Public</Filter>
-    </ClInclude>
     <ClInclude Include="LightHelper.h">
       <Filter>Engine\Utility\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
+      <Filter>Engine\Utility\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Water.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Hill.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Cylinder.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Object\Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

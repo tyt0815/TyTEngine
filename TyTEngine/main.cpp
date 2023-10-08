@@ -1,7 +1,9 @@
 #include "pch.h"
-#include "Core.h"
+
 #include <crtdbg.h>
 #include <iostream>
+
+#include "Engine.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib ,"D3DCompiler.lib")
@@ -15,7 +17,7 @@ int WINAPI WinMain(	_In_ HINSTANCE hInstance,
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-	CCore* TyTEngine = CCore::GetInstance();
+	TEngine* TyTEngine = TEngine::GetInstance();
 
 	if (!TyTEngine->Init(hInstance, CmdShow))
 	{

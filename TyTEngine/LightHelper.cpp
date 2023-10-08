@@ -1,17 +1,17 @@
 #include "pch.h"
 #include "LightHelper.h"
 
-DirectionalLight::DirectionalLight()
+SDirectionalLight::SDirectionalLight()
 {
 	ZeroMemory(this, sizeof(this));
 }
 
-PointLight::PointLight()
+SPointLight::SPointLight()
 {
 	ZeroMemory(this, sizeof(this));
 }
 
-SpotLight::SpotLight()
+SSpotLight::SSpotLight()
 {
 	ZeroMemory(this, sizeof(this));
 }

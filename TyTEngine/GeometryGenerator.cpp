@@ -1,53 +1,53 @@
 #include "pch.h"
 #include "GeometryGenerator.h"
 
-void OGeometryGenerator::CreateCube(float Width, float Height, float Depth, MeshData& Mesh)
+void UGeometryGenerator::CreateCube(float Width, float Height, float Depth, MeshData& Mesh)
 {
 	//
 	// Create the vertices.
 	//
 
-	Vertex v[24];
+	SVertex v[24];
 
 	float w2 = 0.5f * Width;
 	float h2 = 0.5f * Height;
 	float d2 = 0.5f * Depth;
 
 	// Fill in the front face vertex data.
-	v[0] = Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[1] = Vertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[2] = Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	v[3] = Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[0] = SVertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[1] = SVertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[2] = SVertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[3] = SVertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Fill in the back face vertex data.
-	v[4] = Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-	v[5] = Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[6] = Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[7] = Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[4] = SVertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[5] = SVertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[6] = SVertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[7] = SVertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Fill in the top face vertex data.
-	v[8] = Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[9] = Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[10] = Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	v[11] = Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[8] = SVertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[9] = SVertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[10] = SVertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[11] = SVertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Fill in the bottom face vertex data.
-	v[12] = Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-	v[13] = Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[14] = Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[15] = Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[12] = SVertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[13] = SVertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[14] = SVertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[15] = SVertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Fill in the left face vertex data.
-	v[16] = Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
-	v[17] = Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
-	v[18] = Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
-	v[19] = Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
+	v[16] = SVertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[17] = SVertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	v[18] = SVertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	v[19] = SVertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
 
 	// Fill in the right face vertex data.
-	v[20] = Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
-	v[21] = Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-	v[22] = Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
-	v[23] = Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	v[20] = SVertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+	v[21] = SVertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	v[22] = SVertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+	v[23] = SVertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
 	Mesh.Vertices.assign(&v[0], &v[24]);
 
@@ -84,56 +84,7 @@ void OGeometryGenerator::CreateCube(float Width, float Height, float Depth, Mesh
 	Mesh.Indices.assign(&i[0], &i[36]);
 }
 
-void OGeometryGenerator::CreateGrid(float Width, float Depth, UINT m, UINT n, MeshData& Mesh)
-{
-	UINT VertexCount = m * n;
-	UINT FaceCount = (m - 1) * (n - 1) * 2;
-	//
-	// Create the vertices.
-	//
-	float HalfWidth = 0.5f * Width;
-	float HalfDepth = 0.5f * Depth;
-	float dx = Width / (n - 1);
-	float dz = Depth / (m - 1);
-	float du = 1.0f / (n - 1);
-	float dv = 1.0f / (m - 1);
-	Mesh.Vertices.resize(VertexCount);
-	for (UINT i = 0; i < m; ++i)
-	{
-		float z = HalfDepth - i * dz;
-		for (UINT j = 0; j < n; ++j) 
-		{
-			float x = -HalfWidth + j * dx;
-			Mesh.Vertices[i * n + j].Position = XMFLOAT3(x, 0.0f, z);
-			// Ignore for now, used for lighting.
-			Mesh.Vertices[i * n + j].Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-			Mesh.Vertices[i * n + j].TangentU = XMFLOAT3(1.0f, 0.0f, 0.0f);
-			// Ignore for now, used for texturing.
-			Mesh.Vertices[i * n + j].TexC.x = x / 15;
-			Mesh.Vertices[i * n + j].TexC.y = z / 15;
-		}
-	}
-
-	Mesh.Indices.resize(FaceCount * 3); // 3 indices per face
-	// Iterate over each quad and compute indices.
-	UINT k = 0;
-	for (UINT i = 0; i < m - 1; ++i)
-	{
-		for (UINT j = 0; j < n - 1; ++j)
-		{
-			Mesh.Indices[k] = i * n + j;
-			Mesh.Indices[k + 1] = i * n + j + 1;
-			Mesh.Indices[k + 2] = (i + 1) * n + j;
-			Mesh.Indices[k + 3] = (i + 1) * n + j;
-			Mesh.Indices[k + 4] = i * n + j + 1;
-			Mesh.Indices[k + 5] = (i + 1) * n + j + 1;
-			k += 6; // next quad
-		}
-	}
-
-}
-
-void OGeometryGenerator::CreateCylinder(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
+void UGeometryGenerator::CreateCylinder(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
 {
 	Mesh.Vertices.clear();
 	Mesh.Indices.clear();
@@ -155,7 +106,7 @@ void OGeometryGenerator::CreateCylinder(float BottomRadius, float TopRadius, flo
 		float dTheta = 2.0f * XM_PI / SliceCount;
 		for (UINT j = 0; j <= SliceCount; ++j)
 		{
-			Vertex vertex;
+			SVertex vertex;
 			float c = cosf(j * dTheta);
 			float s = sinf(j * dTheta);
 			vertex.Position = XMFLOAT3(r * c, y, r * s);
@@ -214,7 +165,7 @@ void OGeometryGenerator::CreateCylinder(float BottomRadius, float TopRadius, flo
 		Height, SliceCount, StackCount, Mesh);
 }
 
-void OGeometryGenerator::CreateGeosphere(float Radius, UINT NumSubdivisions, MeshData& Mesh)
+void UGeometryGenerator::CreateGeosphere(float Radius, UINT NumSubdivisions, MeshData& Mesh)
 {
 	// Put a cap on the number of subdivisions.
 	NumSubdivisions = UMathHelper::Min(NumSubdivisions, 5u);
@@ -272,7 +223,76 @@ void OGeometryGenerator::CreateGeosphere(float Radius, UINT NumSubdivisions, Mes
 	}
 }
 
-void OGeometryGenerator::BuildCylinderTopCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
+void UGeometryGenerator::CreateGrid(float Width, float Depth, UINT m, UINT n, MeshData& Mesh)
+{
+	UINT VertexCount = m * n;
+	UINT FaceCount = (m - 1) * (n - 1) * 2;
+	//
+	// Create the vertices.
+	//
+	float HalfWidth = 0.5f * Width;
+	float HalfDepth = 0.5f * Depth;
+	float dx = Width / (n - 1);
+	float dz = Depth / (m - 1);
+	float du = 1.0f / (n - 1);
+	float dv = 1.0f / (m - 1);
+	Mesh.Vertices.resize(VertexCount);
+	for (UINT i = 0; i < m; ++i)
+	{
+		float z = HalfDepth - i * dz;
+		for (UINT j = 0; j < n; ++j) 
+		{
+			float x = -HalfWidth + j * dx;
+			Mesh.Vertices[i * n + j].Position = XMFLOAT3(x, 0.0f, z);
+			// Ignore for now, used for lighting.
+			Mesh.Vertices[i * n + j].Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			Mesh.Vertices[i * n + j].TangentU = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			// Ignore for now, used for texturing.
+			Mesh.Vertices[i * n + j].TexC.x = j * du;
+			Mesh.Vertices[i * n + j].TexC.y = i * dv;
+		}
+	}
+
+	Mesh.Indices.resize(FaceCount * 3); // 3 indices per face
+	// Iterate over each quad and compute indices.
+	UINT k = 0;
+	for (UINT i = 0; i < m - 1; ++i)
+	{
+		for (UINT j = 0; j < n - 1; ++j)
+		{
+			Mesh.Indices[k] = i * n + j;
+			Mesh.Indices[k + 1] = i * n + j + 1;
+			Mesh.Indices[k + 2] = (i + 1) * n + j;
+			Mesh.Indices[k + 3] = (i + 1) * n + j;
+			Mesh.Indices[k + 4] = i * n + j + 1;
+			Mesh.Indices[k + 5] = (i + 1) * n + j + 1;
+			k += 6; // next quad
+		}
+	}
+
+}
+
+void UGeometryGenerator::CreateHill(float Width, float Depth, UINT m, UINT n, MeshData& Mesh)
+{
+	CreateGrid(Width, Depth, m, n, Mesh);
+	for (size_t i = 0; i < Mesh.Vertices.size(); ++i)
+	{
+		Mesh.Vertices[i].Position.y = GetHillHeight(Mesh.Vertices[i].Position.x, Mesh.Vertices[i].Position.z);
+		Mesh.Vertices[i].Normal = GetGridNormal(Mesh.Vertices[i].Position.x, Mesh.Vertices[i].Position.z);
+	}
+}
+
+void UGeometryGenerator::CreateWater(float Width, float Depth, UINT m, UINT n, MeshData& Mesh)
+{
+	CreateGrid(Width, Depth, m, n, Mesh);
+	for (size_t i = 0; i < Mesh.Vertices.size(); ++i)
+	{
+		Mesh.Vertices[i].Position.y = GetWatersHeight(Mesh.Vertices[i].Position.x, Mesh.Vertices[i].Position.z);
+		Mesh.Vertices[i].Normal = GetGridNormal(Mesh.Vertices[i].Position.x, Mesh.Vertices[i].Position.z);
+	}
+}
+
+void UGeometryGenerator::BuildCylinderTopCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
 {
 	UINT BaseIndex = (UINT)Mesh.Vertices.size();
 	float y = 0.5f * Height;
@@ -288,14 +308,14 @@ void OGeometryGenerator::BuildCylinderTopCap(float BottomRadius, float TopRadius
 		float u = x / Height + 0.5f;
 		float v = z / Height + 0.5f;
 		Mesh.Vertices.push_back(
-			Vertex(x, y, z,
+			SVertex(x, y, z,
 				0.0f, 1.0f, 0.0f,
 				1.0f, 0.0f, 0.0f,
 				u, v));
 	}
 	// Cap center vertex.
 	Mesh.Vertices.push_back(
-		Vertex(0.0f, y, 0.0f,
+		SVertex(0.0f, y, 0.0f,
 			0.0f, 1.0f, 0.0f,
 			1.0f, 0.0f, 0.0f,
 			0.5f, 0.5f));
@@ -310,7 +330,7 @@ void OGeometryGenerator::BuildCylinderTopCap(float BottomRadius, float TopRadius
 
 }
 
-void OGeometryGenerator::BuildCylinderBottomCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
+void UGeometryGenerator::BuildCylinderBottomCap(float BottomRadius, float TopRadius, float Height, UINT SliceCount, UINT StackCount, MeshData& Mesh)
 {
 	UINT BaseIndex = (UINT)Mesh.Vertices.size();
 	float y = -0.5f * Height;
@@ -326,14 +346,14 @@ void OGeometryGenerator::BuildCylinderBottomCap(float BottomRadius, float TopRad
 		float u = x / Height + 0.5f;
 		float v = z / Height + 0.5f;
 		Mesh.Vertices.push_back(
-			Vertex(x, y, z,
+			SVertex(x, y, z,
 				0.0f, -1.0f, 0.0f,
 				1.0f, 0.0f, 0.0f,
 				u, v));
 	}
 	// Cap center vertex.
 	Mesh.Vertices.push_back(
-		Vertex(0.0f, y, 0.0f,
+		SVertex(0.0f, y, 0.0f,
 			0.0f, -1.0f, 0.0f,
 			1.0f, 0.0f, 0.0f,
 			0.5f, 0.5f));
@@ -347,7 +367,29 @@ void OGeometryGenerator::BuildCylinderBottomCap(float BottomRadius, float TopRad
 	}
 }
 
-void OGeometryGenerator::Subdivide(MeshData& Mesh)
+XMFLOAT3 UGeometryGenerator::GetGridNormal(float x, float z)
+{
+	XMFLOAT3 Normal = XMFLOAT3(
+		-0.3f * (0.1f * z * cosf(0.1f * x) + cosf(0.1f * z)),
+		1.f,
+		-0.3f * (sinf(0.1f * x) - 0.1f * x * sinf(0.1f * z))
+	);
+
+	return UMathHelper::NormalizeXMFLOAT(Normal);
+}
+
+float UGeometryGenerator::GetHillHeight(float x, float z)
+{
+	return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z));
+}
+
+float UGeometryGenerator::GetWatersHeight(float x, float z)
+{
+	return sinf(0.1f * x) + cosf(0.1f * z);
+}
+
+
+void UGeometryGenerator::Subdivide(MeshData& Mesh)
 {
 	// Save a copy of the input geometry.
 	MeshData InputCopy = Mesh;
@@ -369,15 +411,15 @@ void OGeometryGenerator::Subdivide(MeshData& Mesh)
 	UINT NumTris = (UINT)InputCopy.Indices.size() / 3;
 	for (UINT i = 0; i < NumTris; ++i)
 	{
-		Vertex v0 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 0]];
-		Vertex v1 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 1]];
-		Vertex v2 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 2]];
+		SVertex v0 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 0]];
+		SVertex v1 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 1]];
+		SVertex v2 = InputCopy.Vertices[InputCopy.Indices[i * 3 + 2]];
 
 		//
 		// Generate the midpoints.
 		//
 
-		Vertex m0, m1, m2;
+		SVertex m0, m1, m2;
 
 		// For subdivision, we just care about the position component.  We derive the other
 		// vertex components in CreateGeosphere.

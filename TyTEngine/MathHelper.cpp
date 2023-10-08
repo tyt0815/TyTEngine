@@ -46,3 +46,11 @@ XMMATRIX UMathHelper::InverseTranspose(CXMMATRIX Matrix)
 	XMVECTOR Det = XMMatrixDeterminant(Result);
 	return XMMatrixTranspose(XMMatrixInverse(&Det, Result));
 }
+
+XMFLOAT3 UMathHelper::NormalizeXMFLOAT(XMFLOAT3 Input)
+{
+	XMFLOAT3 Normal;
+	XMVECTOR UnitNorm = XMVector3Normalize(XMLoadFloat3(&Input));
+	XMStoreFloat3(&Normal, UnitNorm);
+	return Normal;
+}

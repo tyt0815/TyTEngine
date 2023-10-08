@@ -1,18 +1,19 @@
 #include "pch.h"
-#include "Core.h"
+#include "Engine.h"
 #include "ObjectManager.h"
-#include "Object.h"
 
-CCore::CCore():
-	CDirect3DApp(),
+TEngine::TEngine():
+	TDirect3DApp(),
+	mInputLayout(nullptr),
+	mVSPerObjectConstantBuffer(nullptr),
+	mPSPerFrameConstantBuffer(nullptr),
+	mPSPerObjectConstantBuffer(nullptr),
+	mVSBlob(nullptr),
+	mVertexShader(nullptr),
+	mPSBlob(nullptr),
+	mPixelShader(nullptr),
+	mSamplerState(nullptr),
 	mLastMousePos({0, 0}),
-	mPSPerFrameConstantBuffer(0),
-	mVSPerObjectConstantBuffer(0),
-	mVSBlob(0),
-	mPSBlob(0),
-	mVertexShader(0),
-	mPixelShader(0),
-	mInputLayout(0),
 	mRadius(5.f),
 	mTheta(1.5f * UMathHelper::Pi),
 	mPhi(0.25f * UMathHelper::Pi)
@@ -23,7 +24,7 @@ CCore::CCore():
 	XMStoreFloat4x4(&mProjMat, I);
 }
 
-CCore::~CCore()
+TEngine::~TEngine()
 {
 	ReleaseCOM(mInputLayout);
 	ReleaseCOM(mVSBlob);
@@ -34,21 +35,34 @@ CCore::~CCore()
 	ReleaseCOM(mVSPerObjectConstantBuffer);
 }
 
-bool CCore::Init(HINSTANCE hInstance, int CmdShow)
+bool TEngine::Init(HINSTANCE hInstance, int CmdShow)
 {
-	if (!CDirect3DApp::Init(hInstance, CmdShow))
+	if (!TDirect3DApp::Init(hInstance, CmdShow))
 	{
 		return false;
 	}
 	BuildShader();
 	BuildVertexLayout();
 	BuildConstantBuffer();
+	CreateObjects();
+
+	ObjectsBeginPlay();
+
 	return true;
 }
 
-void CCore::OnResize()
+void TEngine::ObjectsBeginPlay()
 {
-	CDirect3DApp::OnResize();
+	vector<unique_ptr<TObject>>& Objects = TObjectManager::GetInstance()->mObjects;
+	for (int i = 0; i < Objects.size(); ++i)
+	{
+		Objects[i]->BeginPlay();
+	}
+}
+
+void TEngine::OnResize()
+{
+	TDirect3DApp::OnResize();
 	// 창이 리사이즈되면 projection matrix를 재계산
 	XMMATRIX ResizedProjMat = XMMatrixPerspectiveFovLH(
 		0.5f * UMathHelper::Pi,	// FOV = 90
@@ -59,7 +73,7 @@ void CCore::OnResize()
 	XMStoreFloat4x4(&mProjMat, ResizedProjMat);
 }
 
-void CCore::UpdateScene(float DeltaTime)
+void TEngine::UpdateScene(float DeltaTime)
 {
 	float x = mRadius * sinf(mPhi) * cosf(mTheta);
 	float z = mRadius * sinf(mPhi) * sinf(mTheta);
@@ -72,28 +86,33 @@ void CCore::UpdateScene(float DeltaTime)
 
 	XMMATRIX ViewMat = XMMatrixLookAtLH(Pos, Target, Up);
 	XMStoreFloat4x4(&mViewMat, ViewMat);
+
+	vector<unique_ptr<TObject>>& Objects = TObjectManager::GetInstance()->mObjects;
+	for (int i = 0; i < Objects.size(); ++i)
+	{
+		Objects[i]->Update(mTimer->DeltaTime());
+	}
 }
 
-void CCore::DrawScene()
+void TEngine::DrawScene()
 {
 	assert(md3dDeviceContext);
 	assert(mSwapChain);
 
-	md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Black));
+	md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Cyan));
 	md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D10_CLEAR_STENCIL, 1.0f, 0);
 	md3dDeviceContext->IASetInputLayout(mInputLayout);
 	md3dDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	UINT Stride = sizeof(Vertex);
+	UINT Stride = sizeof(SVertex);
 	UINT Offset = 0;
 	md3dDeviceContext->VSSetShader(mVertexShader, nullptr, 0);
 	md3dDeviceContext->PSSetShader(mPixelShader, nullptr, 0);
 
 	PSPerFrameConstantBufferUpdate();
 
-	vector<unique_ptr<OObject>>& Objects = CObjectManager::GetInstance()->mObjects;
+	vector<unique_ptr<TObject>>& Objects = TObjectManager::GetInstance()->mObjects;
 	for (int i = 0; i < Objects.size(); ++i)
 	{
-		Objects[i]->Update(mTimer->DeltaTime());
 		VSPerObjectConstantBufferUpdate(Objects[i]);
 		PSPerObjectConstantBufferUpdate(Objects[i]);
 
@@ -106,12 +125,12 @@ void CCore::DrawScene()
 	HR(mSwapChain->Present(0, 0));
 }
 
-void CCore::VSPerObjectConstantBufferUpdate(unique_ptr<OObject>& Object)
+void TEngine::VSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object)
 {
 	D3D11_MAPPED_SUBRESOURCE MappedSubresource;
-	VSPerObjectConstantBuffer* ConstantBuffer;
+	SVSPerObjectConstantBuffer* ConstantBuffer;
 	md3dDeviceContext->Map(mVSPerObjectConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
-	ConstantBuffer = (VSPerObjectConstantBuffer*)MappedSubresource.pData;
+	ConstantBuffer = (SVSPerObjectConstantBuffer*)MappedSubresource.pData;
 	XMMATRIX WorldMat = Object->GetWorldMatrix();
 	XMMATRIX ViewMat = XMLoadFloat4x4(&mViewMat);
 	XMMATRIX ProjMat = XMLoadFloat4x4(&mProjMat);
@@ -123,44 +142,44 @@ void CCore::VSPerObjectConstantBufferUpdate(unique_ptr<OObject>& Object)
 	md3dDeviceContext->VSSetConstantBuffers(1, 1, &mVSPerObjectConstantBuffer);
 }
 
-void CCore::PSPerFrameConstantBufferUpdate()
+void TEngine::PSPerFrameConstantBufferUpdate()
 {
 	D3D11_MAPPED_SUBRESOURCE MappedSubresource;
-	PSPerFrameConstantBuffer* ConstantBuffer;
+	SPSPerFrameConstantBuffer* ConstantBuffer;
 	md3dDeviceContext->Map(mPSPerFrameConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
-	ConstantBuffer = (PSPerFrameConstantBuffer*)MappedSubresource.pData;
-	ConstantBuffer->DirLit = CObjectManager::GetInstance()->mDirLight;
-	ConstantBuffer->PointLit = CObjectManager::GetInstance()->mPointLight;
-	ConstantBuffer->SpotLit = CObjectManager::GetInstance()->mSpotLight;
+	ConstantBuffer = (SPSPerFrameConstantBuffer*)MappedSubresource.pData;
+	ConstantBuffer->DirLit = TObjectManager::GetInstance()->mDirLight;
+	ConstantBuffer->PointLit = TObjectManager::GetInstance()->mPointLight;
+	ConstantBuffer->SpotLit = TObjectManager::GetInstance()->mSpotLight;
 	ConstantBuffer->EyePosW = mCameraPos;
 	md3dDeviceContext->Unmap(mPSPerFrameConstantBuffer, 0);
 	md3dDeviceContext->PSSetConstantBuffers(0, 1, &mPSPerFrameConstantBuffer);
 }
 
-void CCore::PSPerObjectConstantBufferUpdate(unique_ptr<OObject>& Object)
+void TEngine::PSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object)
 {
 	D3D11_MAPPED_SUBRESOURCE MappedSubresource;
-	PSPerObjectConstantBuffer* ConstantBuffer;
+	SPSPerObjectConstantBuffer* ConstantBuffer;
 	md3dDeviceContext->Map(mPSPerObjectConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
-	ConstantBuffer = (PSPerObjectConstantBuffer*)MappedSubresource.pData;
+	ConstantBuffer = (SPSPerObjectConstantBuffer*)MappedSubresource.pData;
 	ConstantBuffer->Mat = Object->mMaterial;
 	md3dDeviceContext->Unmap(mPSPerObjectConstantBuffer, 0);
 	md3dDeviceContext->PSSetConstantBuffers(1, 1, &mPSPerObjectConstantBuffer);
 }
 
-void CCore::OnMouseDown(WPARAM BtnState, int x, int y)
+void TEngine::OnMouseDown(WPARAM BtnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	SetCapture(mhMainWnd);
 }
 
-void CCore::OnMouseUp(WPARAM BtnState, int x, int y)
+void TEngine::OnMouseUp(WPARAM BtnState, int x, int y)
 {
 	ReleaseCapture();
 }
 
-void CCore::OnMouseMove(WPARAM BtnState, int x, int y)
+void TEngine::OnMouseMove(WPARAM BtnState, int x, int y)
 {
 	if ((BtnState & MK_LBUTTON) != 0)
 	{
@@ -181,25 +200,25 @@ void CCore::OnMouseMove(WPARAM BtnState, int x, int y)
 	mLastMousePos.y = y;
 }
 
-void CCore::BuildConstantBuffer()
+void TEngine::BuildConstantBuffer()
 {
 	D3D11_BUFFER_DESC VSPerObjectConstantBufferDesc = {};
 	VSPerObjectConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	VSPerObjectConstantBufferDesc.ByteWidth = sizeof(VSPerObjectConstantBuffer) + 0xf & 0xfffffff0;
+	VSPerObjectConstantBufferDesc.ByteWidth = sizeof(SVSPerObjectConstantBuffer) + 0xf & 0xfffffff0;
 	VSPerObjectConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	VSPerObjectConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	HR(md3dDevice->CreateBuffer(&VSPerObjectConstantBufferDesc, nullptr, &mVSPerObjectConstantBuffer));
 
 	D3D11_BUFFER_DESC PSPerFrameConstantBufferDesc = {};
 	PSPerFrameConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	PSPerFrameConstantBufferDesc.ByteWidth = sizeof(PSPerFrameConstantBuffer) + 0xf & 0xfffffff0;
+	PSPerFrameConstantBufferDesc.ByteWidth = sizeof(SPSPerFrameConstantBuffer) + 0xf & 0xfffffff0;
 	PSPerFrameConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	PSPerFrameConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	HR(md3dDevice->CreateBuffer(&PSPerFrameConstantBufferDesc, nullptr, &mPSPerFrameConstantBuffer));
 
 	D3D11_BUFFER_DESC PSPerObjectConstantBufferDesc = {};
 	PSPerObjectConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	PSPerObjectConstantBufferDesc.ByteWidth = sizeof(PSPerObjectConstantBuffer) + 0xf & 0xfffffff0;
+	PSPerObjectConstantBufferDesc.ByteWidth = sizeof(SPSPerObjectConstantBuffer) + 0xf & 0xfffffff0;
 	PSPerObjectConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	PSPerObjectConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	HR(md3dDevice->CreateBuffer(&PSPerObjectConstantBufferDesc, nullptr, &mPSPerObjectConstantBuffer));
@@ -220,7 +239,7 @@ void CCore::BuildConstantBuffer()
 	md3dDeviceContext->PSSetSamplers(0, 1, &mSamplerState);
 }
 
-void CCore::BuildShader()
+void TEngine::BuildShader()
 {
 	HR(D3DCompileFromFile(L"VertexShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0", 0, 0, &mVSBlob, nullptr));
 	HR(md3dDevice->CreateVertexShader(mVSBlob->GetBufferPointer(), mVSBlob->GetBufferSize(), nullptr, &mVertexShader));
@@ -228,7 +247,7 @@ void CCore::BuildShader()
 	HR(md3dDevice->CreatePixelShader(mPSBlob->GetBufferPointer(), mPSBlob->GetBufferSize(), nullptr, &mPixelShader));
 }
 
-void CCore::BuildVertexLayout()
+void TEngine::BuildVertexLayout()
 {
 	D3D11_INPUT_ELEMENT_DESC VertexDesc[] =
 	{
@@ -240,5 +259,24 @@ void CCore::BuildVertexLayout()
 		D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	HR(md3dDevice->CreateInputLayout(VertexDesc, ARRAYSIZE(VertexDesc), mVSBlob->GetBufferPointer(), mVSBlob->GetBufferSize(), &mInputLayout));
+}
+
+void TEngine::CreateObjects()
+{
+	ACube* Cube = new ACube();
+	Cube->SetSRV(L"Textures/WoodCrate01.dds");
+	Cube->mTranslation = XMFLOAT3(2.f, 0.f, 0.f);
+	AHill* Hill = new AHill(150, 150, 50, 50);
+	Hill->SetSRV(L"Textures/grass.dds");
+	Hill->mTranslation = XMFLOAT3(0.f, -5.f, 0.f);
+	AWater* Water = new AWater(150, 150, 50, 50);
+	Water->SetSRV(L"Textures/water2.dds");
+	Water->mTranslation.y = -5.f;
+	ACylinder* Cylinder = new ACylinder();
+	Cylinder->SetSRV(L"Textures/darkbrickdxt1.dds");
+	Cylinder->mTranslation = XMFLOAT3(-2.f, 0.f, 0.f);
+	ASphere* Sphere = new ASphere();
+	Sphere->SetSRV(L"Textures/red.dds");
+	Sphere->mTranslation = XMFLOAT3(0.f, 2.f, 0.f);
 }
 

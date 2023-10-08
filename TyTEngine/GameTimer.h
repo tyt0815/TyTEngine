@@ -1,9 +1,9 @@
 #pragma once
 
-class CGameTimer
+class TGameTimer
 {
 public:
-	CGameTimer();
+	TGameTimer();
 
 	float TotalTime()const;
 	float DeltaTime()const;

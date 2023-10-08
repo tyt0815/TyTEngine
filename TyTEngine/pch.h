@@ -22,14 +22,14 @@
 
 using namespace std;
 
-struct Vertex
+struct SVertex
 {
-    XMFLOAT3 Pos;
+    XMFLOAT3 Position;
     XMFLOAT3 Normal;
     XMFLOAT2 UV;
 };
 
-struct VSPerObjectConstantBuffer
+struct SVSPerObjectConstantBuffer
 {
     XMMATRIX World;
     XMMATRIX WorldInverseTranspose;
@@ -37,15 +37,15 @@ struct VSPerObjectConstantBuffer
     XMMATRIX TexTransform;
 };
 
-struct PSPerFrameConstantBuffer
+struct SPSPerFrameConstantBuffer
 {
-    DirectionalLight DirLit;
-    PointLight PointLit;
-    SpotLight SpotLit;
+    SDirectionalLight DirLit;
+    SPointLight PointLit;
+    SSpotLight SpotLit;
     XMFLOAT3 EyePosW;
 };
 
-struct PSPerObjectConstantBuffer
+struct SPSPerObjectConstantBuffer
 {
-    Material Mat;
+    SMaterial Mat;
 };

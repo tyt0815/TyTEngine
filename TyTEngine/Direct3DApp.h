@@ -14,13 +14,13 @@ struct ID3D11DepthStencilView;
 struct ID3D11Texture2D;
 struct D3D11_VIEWPORT;
 
-class CGameTimer;
+class TGameTimer;
 
-class CDirect3DApp
+class TDirect3DApp
 {
 public:
-	CDirect3DApp();
-	~CDirect3DApp();
+	TDirect3DApp();
+	~TDirect3DApp();
 	virtual bool Init(HINSTANCE HInstance, int CmdShow);
 	int Run();
 
@@ -41,7 +41,7 @@ protected:
 	virtual void OnMouseUp(WPARAM btnState, int x, int y) { }	// 자식 클래스에서 구현
 	virtual void OnMouseMove(WPARAM btnState, int x, int y) { }	// 자식 클래스에서 구현
 
-	CGameTimer *mTimer;
+	TGameTimer *mTimer;
 
 	/*
 	* Win32

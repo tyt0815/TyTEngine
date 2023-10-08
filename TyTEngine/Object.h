@@ -1,27 +1,34 @@
 #pragma once
 
-class OObject
+class TObject
 {
 public:
-	OObject(vector<Vertex> Vertices, size_t VerticesSize, vector<UINT> Indices, size_t NumIndex,
-		const WCHAR* TextureFileName = L"Textures/default.dds");
-	~OObject();
+	TObject();
+	~TObject();
 	virtual void Update(float DeltaTime);
-	XMMATRIX GetWorldMatrix();
-	XMMATRIX GetTexTransform();
+	virtual void BeginPlay();
 
+	void SetD3DBuffers(UGeometryGenerator::MeshData Mesh);
+	void SetSRV(const WCHAR* TextureFileName = L"Textures/default.dds");
 
-	UINT mNumIndex;
 	ID3D11Buffer* mVertexBuffer;
 	ID3D11Buffer* mIndexBuffer;
+	UINT mNumIndex;
 	ID3D11ShaderResourceView* mTextureView;
-	float mLifeTime;
-
-	XMFLOAT3 mLocation;
+	XMFLOAT3 mTranslation;
 	XMFLOAT3 mRotation;	// ¶óµð¾È
 	XMFLOAT3 mScale;
-	Material mMaterial;
 	XMFLOAT3 mTexScale;
+	XMFLOAT3 mTexRotation;
 	XMFLOAT3 mTexTranslation;
-	XMFLOAT3 mTexVelocity;
+	SMaterial mMaterial;
+
+protected:
+	float mRunningTime;
+private:
+
+public:
+	XMMATRIX GetWorldMatrix();
+	XMMATRIX GetTexTransform();
+	void SetMaterial(SMaterial Material);
 };

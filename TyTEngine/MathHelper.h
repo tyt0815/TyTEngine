@@ -13,6 +13,7 @@ public:
 	static UINT Min(UINT A, UINT B);
 	static float AngleFromXY(float A, float B);
 	static XMMATRIX InverseTranspose(CXMMATRIX Matrix);
+	static XMFLOAT3 NormalizeXMFLOAT(XMFLOAT3 Input);
 };
 
 template<typename T>

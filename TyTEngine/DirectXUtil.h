@@ -67,4 +67,3 @@ static void _PrintDebugString(const char* format, ...) {
     OutputDebugStringA(buf);
 }
 #endif
-

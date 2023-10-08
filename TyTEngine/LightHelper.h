@@ -1,8 +1,8 @@
 #pragma once
 
-struct DirectionalLight
+struct SDirectionalLight
 {
-	DirectionalLight();
+	SDirectionalLight();
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;
@@ -10,9 +10,9 @@ struct DirectionalLight
 	float Pad;	//XMFLOAT3 를 쓰면 4바이트가 비기 때문에 채워주는 용도인듯
 };
 
-struct PointLight
+struct SPointLight
 {
-	PointLight();
+	SPointLight();
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;
@@ -24,9 +24,9 @@ struct PointLight
 	float Pad;
 };
 
-struct SpotLight
+struct SSpotLight
 {
-	SpotLight();
+	SSpotLight();
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;
@@ -41,7 +41,7 @@ struct SpotLight
 	float Pad;
 };
 
-struct Material
+struct SMaterial
 {
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
