@@ -13,11 +13,13 @@ public:
 	SINGLETON(TObjectManager);
 
 	vector<unique_ptr<TObject>> mObjects;
-	SDirectionalLight mDirLight;
-	SPointLight mPointLight;
-	SSpotLight mSpotLight;
+	vector<unique_ptr<SDirectionalLight>> mDirLits;
+	vector<unique_ptr<SPointLight>> mPointLits;
+	vector<unique_ptr<SSpotLight>> mSpotLits;
 
 private:
 	TObjectManager();
 	~TObjectManager();
+
+public:
 };

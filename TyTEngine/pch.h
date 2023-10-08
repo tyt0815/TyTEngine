@@ -39,13 +39,18 @@ struct SVSPerObjectConstantBuffer
 
 struct SPSPerFrameConstantBuffer
 {
-    SDirectionalLight DirLit;
-    SPointLight PointLit;
-    SSpotLight SpotLit;
+    XMUINT4 NumLit;
     XMFLOAT3 EyePosW;
 };
 
 struct SPSPerObjectConstantBuffer
 {
     SMaterial Mat;
+};
+
+struct SPSLitConstantBuffer
+{
+    SDirectionalLight DirLit [MAX_DIR_LIT];
+    SPointLight PointLit [MAX_POINT_LIT];
+    SSpotLight SpotLit [MAX_SPOT_LIT];
 };

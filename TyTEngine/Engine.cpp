@@ -8,13 +8,14 @@ TEngine::TEngine():
 	mVSPerObjectConstantBuffer(nullptr),
 	mPSPerFrameConstantBuffer(nullptr),
 	mPSPerObjectConstantBuffer(nullptr),
+	mPSLitConstantBuffer(nullptr),
 	mVSBlob(nullptr),
 	mVertexShader(nullptr),
 	mPSBlob(nullptr),
 	mPixelShader(nullptr),
 	mSamplerState(nullptr),
 	mLastMousePos({0, 0}),
-	mRadius(5.f),
+	mRadius(10.f),
 	mTheta(1.5f * UMathHelper::Pi),
 	mPhi(0.25f * UMathHelper::Pi)
 {
@@ -45,9 +46,8 @@ bool TEngine::Init(HINSTANCE hInstance, int CmdShow)
 	BuildVertexLayout();
 	BuildConstantBuffer();
 	CreateObjects();
-
+	CreateLits();
 	ObjectsBeginPlay();
-
 	return true;
 }
 
@@ -109,6 +109,7 @@ void TEngine::DrawScene()
 	md3dDeviceContext->PSSetShader(mPixelShader, nullptr, 0);
 
 	PSPerFrameConstantBufferUpdate();
+	PSLitConstantBufferUpdate();
 
 	vector<unique_ptr<TObject>>& Objects = TObjectManager::GetInstance()->mObjects;
 	for (int i = 0; i < Objects.size(); ++i)
@@ -144,13 +145,17 @@ void TEngine::VSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object)
 
 void TEngine::PSPerFrameConstantBufferUpdate()
 {
+	TObjectManager* ObjectManager = TObjectManager::GetInstance();
 	D3D11_MAPPED_SUBRESOURCE MappedSubresource;
 	SPSPerFrameConstantBuffer* ConstantBuffer;
 	md3dDeviceContext->Map(mPSPerFrameConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
 	ConstantBuffer = (SPSPerFrameConstantBuffer*)MappedSubresource.pData;
-	ConstantBuffer->DirLit = TObjectManager::GetInstance()->mDirLight;
-	ConstantBuffer->PointLit = TObjectManager::GetInstance()->mPointLight;
-	ConstantBuffer->SpotLit = TObjectManager::GetInstance()->mSpotLight;
+	ConstantBuffer->NumLit = XMUINT4(
+		ObjectManager->mDirLits.size(),
+		ObjectManager->mPointLits.size(),
+		ObjectManager->mSpotLits.size(),
+		0
+	);
 	ConstantBuffer->EyePosW = mCameraPos;
 	md3dDeviceContext->Unmap(mPSPerFrameConstantBuffer, 0);
 	md3dDeviceContext->PSSetConstantBuffers(0, 1, &mPSPerFrameConstantBuffer);
@@ -165,6 +170,29 @@ void TEngine::PSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object)
 	ConstantBuffer->Mat = Object->mMaterial;
 	md3dDeviceContext->Unmap(mPSPerObjectConstantBuffer, 0);
 	md3dDeviceContext->PSSetConstantBuffers(1, 1, &mPSPerObjectConstantBuffer);
+}
+
+void TEngine::PSLitConstantBufferUpdate()
+{
+	TObjectManager* ObjectManager = TObjectManager::GetInstance();
+	D3D11_MAPPED_SUBRESOURCE MappedSubresource;
+	SPSLitConstantBuffer* ConstantBuffer;
+	md3dDeviceContext->Map(mPSLitConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
+	ConstantBuffer = (SPSLitConstantBuffer*)MappedSubresource.pData;
+	for (int i = 0; i < ObjectManager->mDirLits.size(); ++i)
+	{
+		memcpy(ConstantBuffer->DirLit + i, ObjectManager->mDirLits[i].get(), sizeof(SDirectionalLight));
+	}
+	for (int i = 0; i < ObjectManager->mPointLits.size(); ++i)
+	{
+		memcpy(ConstantBuffer->PointLit + i, ObjectManager->mPointLits[i].get(), sizeof(SPointLight));
+	}
+	for (int i = 0; i < ObjectManager->mSpotLits.size(); ++i)
+	{
+		memcpy(ConstantBuffer->SpotLit + i, ObjectManager->mSpotLits[i].get(), sizeof(SSpotLight));
+	}
+	md3dDeviceContext->Unmap(mPSLitConstantBuffer, 0);
+	md3dDeviceContext->PSSetConstantBuffers(2, 1, &mPSLitConstantBuffer);
 }
 
 void TEngine::OnMouseDown(WPARAM BtnState, int x, int y)
@@ -223,6 +251,13 @@ void TEngine::BuildConstantBuffer()
 	PSPerObjectConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	HR(md3dDevice->CreateBuffer(&PSPerObjectConstantBufferDesc, nullptr, &mPSPerObjectConstantBuffer));
 
+	D3D11_BUFFER_DESC PSLitBufferDesc = {};
+	PSLitBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	PSLitBufferDesc.ByteWidth = sizeof(SPSLitConstantBuffer) + 0xf & 0xfffffff0;
+	PSLitBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	PSLitBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	HR(md3dDevice->CreateBuffer(&PSLitBufferDesc, nullptr, &mPSLitConstantBuffer));
+
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -234,7 +269,6 @@ void TEngine::BuildConstantBuffer()
 	SamplerDesc.BorderColor;
 	SamplerDesc.MinLOD = FLT_MIN;
 	SamplerDesc.MaxLOD = FLT_MAX;
-
 	md3dDevice->CreateSamplerState(&SamplerDesc, &mSamplerState);
 	md3dDeviceContext->PSSetSamplers(0, 1, &mSamplerState);
 }
@@ -280,3 +314,53 @@ void TEngine::CreateObjects()
 	Sphere->mTranslation = XMFLOAT3(0.f, 2.f, 0.f);
 }
 
+void TEngine::CreateLits()
+{
+	SDirectionalLight DirLit1;
+	DirLit1.Ambient = XMFLOAT4(0.5f, 0.f, 0.f, 1.0f);
+	DirLit1.Diffuse = XMFLOAT4(0.5f, 0.f, 0.f, 1.0f);
+	DirLit1.Specular = XMFLOAT4(0.5f, 0.f, 0.f, 1.0f);
+	DirLit1.Direction = UMathHelper::NormalizeXMFLOAT(XMFLOAT3(1.f, -1.f, 0.f));
+	AddLit(DirLit1);
+	SDirectionalLight DirLit2;
+	DirLit2.Ambient = XMFLOAT4(0.f, 0.f, 0.5f, 1.0f);
+	DirLit2.Diffuse = XMFLOAT4(0.f, 0.f, 0.5f, 1.0f);
+	DirLit2.Specular = XMFLOAT4(0.f, 0.f, 0.5f, 1.0f);
+	DirLit2.Direction = UMathHelper::NormalizeXMFLOAT(XMFLOAT3(-1.f, -1.f, 0.f));
+	AddLit(DirLit2);
+
+	SPointLight PointLit1;
+	PointLit1.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	PointLit1.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	PointLit1.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	PointLit1.Position = {};
+	PointLit1.Range = 15.f;
+	PointLit1.Attenuation = XMFLOAT3(1.f, .1f, 0.01f);
+	AddLit(PointLit1);
+
+	SSpotLight SpotLit1;
+	SpotLit1.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	SpotLit1.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	SpotLit1.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	SpotLit1.Position = { 3.f, 3.f, 0.f };
+	SpotLit1.Range = 50.f;
+	SpotLit1.Attenuation = XMFLOAT3(1.f, .1f, 0.01f);
+	SpotLit1.Direction = UMathHelper::NormalizeXMFLOAT(XMFLOAT3(-1.f, -1.f, 0.f));
+	SpotLit1.Spot = 5.f;
+	AddLit(SpotLit1);
+}
+
+void TEngine::AddLit(SDirectionalLight& DirectionalLight)
+{
+	TObjectManager::GetInstance()->mDirLits.push_back(make_unique<SDirectionalLight>(DirectionalLight));
+}
+
+void TEngine::AddLit(SPointLight& PointLight)
+{
+	TObjectManager::GetInstance()->mPointLits.push_back(make_unique<SPointLight>(PointLight));
+}
+
+void TEngine::AddLit(SSpotLight& SpotLight)
+{
+	TObjectManager::GetInstance()->mSpotLits.push_back(make_unique<SSpotLight>(SpotLight));
+}

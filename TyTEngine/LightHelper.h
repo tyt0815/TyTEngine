@@ -1,8 +1,10 @@
 #pragma once
+#define MAX_DIR_LIT 3
+#define MAX_POINT_LIT 20
+#define MAX_SPOT_LIT 20
 
 struct SDirectionalLight
 {
-	SDirectionalLight();
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;
@@ -12,7 +14,6 @@ struct SDirectionalLight
 
 struct SPointLight
 {
-	SPointLight();
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;
@@ -26,7 +27,6 @@ struct SPointLight
 
 struct SSpotLight
 {
-	SSpotLight();
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;

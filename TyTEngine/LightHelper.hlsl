@@ -1,3 +1,7 @@
+#define MAX_DIR_LIT 3
+#define MAX_POINT_LIT 20
+#define MAX_SPOT_LIT 20
+
 struct DirectionalLight
 {
 	float4 Ambient;
@@ -35,7 +39,7 @@ struct Material
 {
 	float4 Ambient;
 	float4 Diffuse;
-	float4 Specular;	// w�� spec �Ŀ�
+	float4 Specular;
 	float4 Reflect;
 };
 

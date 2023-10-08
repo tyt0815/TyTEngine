@@ -17,6 +17,7 @@ public:
 	void VSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object);
 	void PSPerFrameConstantBufferUpdate();
 	void PSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object);
+	void PSLitConstantBufferUpdate();
 
 	virtual void OnMouseDown(WPARAM BtnState, int x, int y) override;
 	virtual void OnMouseUp(WPARAM BtnState, int x, int y) override;
@@ -30,11 +31,16 @@ private:
 	void BuildShader();
 	void BuildVertexLayout();
 	void CreateObjects();
+	void CreateLits();
+	void AddLit(SDirectionalLight& DirLit1);
+	void AddLit(SPointLight& PointLit1);
+	void AddLit(SSpotLight& SpotLit1);
 
 	ID3D11InputLayout* mInputLayout;
 	ID3D11Buffer* mVSPerObjectConstantBuffer;
 	ID3D11Buffer* mPSPerFrameConstantBuffer;
 	ID3D11Buffer* mPSPerObjectConstantBuffer;
+	ID3D11Buffer* mPSLitConstantBuffer;
 	ID3DBlob* mVSBlob;
 	ID3D11VertexShader* mVertexShader;
 	ID3DBlob* mPSBlob;

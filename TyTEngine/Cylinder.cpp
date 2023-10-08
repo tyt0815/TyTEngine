@@ -20,5 +20,5 @@ ACylinder::~ACylinder()
 void ACylinder::Update(float DeltaTime)
 {
 	AActor::Update(DeltaTime);
-	mScale = XMFLOAT3(0.5f + 0.5f * sinf(mRunningTime), 0.5f + 0.5f * sinf(mRunningTime), 0.5f + 0.5f * sinf(mRunningTime));
+	mScale = XMFLOAT3(0.75f + 0.25f * sinf(mRunningTime), 0.75f + 0.25f * sinf(mRunningTime), 0.75f + 0.25f * sinf(mRunningTime));
 }

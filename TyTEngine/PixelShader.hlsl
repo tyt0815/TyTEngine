@@ -5,9 +5,7 @@ SamplerState SmpState : register(s0);
 
 cbuffer PerFrame : register(b0)
 {
-	DirectionalLight gDirLight;
-	PointLight gPointLight;
-	SpotLight gSpotLight;
+    uint4 gNumLights; // Dir, Point, Spot, Pad
 	float3 gEyePosW;
 };
 
@@ -24,6 +22,14 @@ struct VertexOut
     float2 UV : TEXCOORD;
 };
 
+cbuffer Lit : register(b2)
+{
+    DirectionalLight gDirLit[MAX_DIR_LIT];
+    PointLight gPointLit[MAX_POINT_LIT];
+    SpotLight gSpotLit[MAX_SPOT_LIT];
+};
+
+
 float4 PSMain(VertexOut PIn) : SV_TARGET
 {	
     float4 TexColor = T2D.Sample(SmpState, PIn.UV);
@@ -37,20 +43,36 @@ float4 PSMain(VertexOut PIn) : SV_TARGET
 	
 	float4 AmbientOut, DiffuseOut, SpecularOut;
 	
-	ComputeDirectionalLight(gMaterial, gDirLight, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
-	Ambient += AmbientOut;
-	Diffuse += DiffuseOut;
-	Specular += SpecularOut;
+    uint i = 0;
+	// Directional Light
+    for (i = 0; i < gNumLights.x; ++i)
+    {
+		ComputeDirectionalLight(gMaterial, gDirLit[i], PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
+		Ambient += AmbientOut;
+		Diffuse += DiffuseOut;
+		Specular += SpecularOut;
+    }
+	
+	// Directional Light
+    for (i = 0; i < gNumLights.y; ++i)
+    {
+        ComputePointLight(gMaterial, gPointLit[i], PIn.PosW, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
+        Ambient += AmbientOut;
+        Diffuse += DiffuseOut;
+        Specular += SpecularOut;
+    }
+	
+	// Directional Light
+    for (i = 0; i < gNumLights.z; ++i)
+    {
+        ComputeSpotLight(gMaterial, gSpotLit[i], PIn.PosW, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
+        Ambient += AmbientOut;
+        Diffuse += DiffuseOut;
+        Specular += SpecularOut;
+    }
+    
 
-	ComputePointLight(gMaterial, gPointLight, PIn.PosW, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
-	Ambient += AmbientOut;
-	Diffuse += DiffuseOut;
-	Specular += SpecularOut;
-
-	ComputeSpotLight(gMaterial, gSpotLight, PIn.PosW, PIn.NormalW, ToEyeW, AmbientOut, DiffuseOut, SpecularOut);
-	Ambient += AmbientOut;
-	Diffuse += DiffuseOut;
-	Specular += SpecularOut;
+	
 
     float4 LitColor = TexColor * (Ambient + Diffuse) + Specular;
 	LitColor.a = gMaterial.Diffuse.a;
