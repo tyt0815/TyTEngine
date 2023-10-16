@@ -317,17 +317,11 @@ void TEngine::CreateObjects()
 void TEngine::CreateLits()
 {
 	SDirectionalLight DirLit1;
-	DirLit1.Ambient = XMFLOAT4(0.5f, 0.f, 0.f, 1.0f);
-	DirLit1.Diffuse = XMFLOAT4(0.5f, 0.f, 0.f, 1.0f);
-	DirLit1.Specular = XMFLOAT4(0.5f, 0.f, 0.f, 1.0f);
+	DirLit1.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	DirLit1.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	DirLit1.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	DirLit1.Direction = UMathHelper::NormalizeXMFLOAT(XMFLOAT3(1.f, -1.f, 0.f));
 	AddLit(DirLit1);
-	SDirectionalLight DirLit2;
-	DirLit2.Ambient = XMFLOAT4(0.f, 0.f, 0.5f, 1.0f);
-	DirLit2.Diffuse = XMFLOAT4(0.f, 0.f, 0.5f, 1.0f);
-	DirLit2.Specular = XMFLOAT4(0.f, 0.f, 0.5f, 1.0f);
-	DirLit2.Direction = UMathHelper::NormalizeXMFLOAT(XMFLOAT3(-1.f, -1.f, 0.f));
-	AddLit(DirLit2);
 
 	SPointLight PointLit1;
 	PointLit1.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
