@@ -41,6 +41,10 @@ struct SPSPerFrameConstantBuffer
 {
     XMUINT4 NumLit;
     XMFLOAT3 EyePosW;
+    float Pad;
+    XMFLOAT4 FogColor;
+    float FogStart;
+    float FogRange;
 };
 
 struct SPSPerObjectConstantBuffer

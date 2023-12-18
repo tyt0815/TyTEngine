@@ -1,8 +1,15 @@
 #pragma once
 
+
 class TObject
 {
 public:
+	enum class EBlendMode
+	{
+		EBMOpaque,
+		EBMTranslucent
+	};
+
 	TObject();
 	~TObject();
 	virtual void Update(float DeltaTime);

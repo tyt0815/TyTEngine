@@ -145,6 +145,7 @@
     <ClCompile Include="LightHelper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="MirrorCube.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Sphere.cpp" />
@@ -161,8 +162,10 @@
     <ClInclude Include="DirectXUtil.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Hill.h" />
+    <ClInclude Include="LightDefine.tyt" />
     <ClInclude Include="LightHelper.h" />
     <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="MirrorCube.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />

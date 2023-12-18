@@ -21,7 +21,6 @@ TObject::TObject() :
 	mMaterial.Specular = { 1.f,1.f,1.f,1.f };
 	mMaterial.Reflect = { 1.f,1.f,1.f,1.f };
 	SetSRV();
-	TObjectManager::GetInstance()->mObjects.push_back(unique_ptr<TObject>(this));
 }
 
 TObject::~TObject()

@@ -1,7 +1,5 @@
 #pragma once
-#define MAX_DIR_LIT 3
-#define MAX_POINT_LIT 20
-#define MAX_SPOT_LIT 20
+#include "LightDefine.tyt"
 
 struct SDirectionalLight
 {

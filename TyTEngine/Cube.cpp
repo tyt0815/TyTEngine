@@ -2,7 +2,7 @@
 #include "Cube.h"
 
 ACube::ACube():
-	AActor()
+	AActor(EBlendMode::EBMTranslucent)
 {
 	UGeometryGenerator::MeshData Mesh;
 	UGeometryGenerator::CreateCube(2, 2, 2, Mesh);

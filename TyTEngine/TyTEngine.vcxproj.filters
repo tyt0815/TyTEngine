@@ -93,6 +93,9 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>Object\Private</Filter>
     </ClCompile>
+    <ClCompile Include="MirrorCube.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -144,6 +147,12 @@
       <Filter>Object\Public</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="LightDefine.tyt">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MirrorCube.h">
       <Filter>Object\Public</Filter>
     </ClInclude>
   </ItemGroup>

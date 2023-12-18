@@ -1,0 +1,7 @@
+/*
+cpp와 hlsl이 공통적으로 참고하는 헤더파일
+*/
+
+#define MAX_DIR_LIT 3
+#define MAX_POINT_LIT 20
+#define MAX_SPOT_LIT 20

@@ -12,9 +12,13 @@ public:
 	bool Init(HINSTANCE hInstance, int CmdShow);
 	virtual void OnResize() override;
 	void UpdateScene(float dt);
+	void UpdateObject(vector<unique_ptr<TObject>>& Object);
 	void DrawScene();
+	void SetDefaultState();
+	void DrawActors(std::vector<std::unique_ptr<TObject>>& OpaqueActors, XMMATRIX AdditionalMat = XMMatrixIdentity());
 	void ObjectsBeginPlay();
-	void VSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object);
+	void ObjectBeginePlay(vector<unique_ptr<TObject>>& Object);
+	void VSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object, XMMATRIX AdditionalMat = XMMatrixIdentity());
 	void PSPerFrameConstantBufferUpdate();
 	void PSPerObjectConstantBufferUpdate(unique_ptr<TObject>& Object);
 	void PSLitConstantBufferUpdate();
@@ -30,7 +34,12 @@ private:
 	void BuildConstantBuffer();
 	void BuildShader();
 	void BuildVertexLayout();
-	void CreateObjects();
+	void InitRenderState();
+	void BuildSamplerState();
+	void BuildBlendState();
+	void BuildRasterizerState();
+	void BuildDepthStencilState();
+	void CreateActors();
 	void CreateLits();
 	void AddLit(SDirectionalLight& DirLit1);
 	void AddLit(SPointLight& PointLit1);
@@ -45,7 +54,15 @@ private:
 	ID3D11VertexShader* mVertexShader;
 	ID3DBlob* mPSBlob;
 	ID3D11PixelShader* mPixelShader;
+	ID3D11PixelShader* mShadowPixelShader;
 	ID3D11SamplerState* mSamplerState;
+	ID3D11RasterizerState* mRSNoCull;
+	ID3D11RasterizerState* mCullClockwiseRS;
+	ID3D11BlendState* mTransparentBS;
+	ID3D11BlendState* mNoRenderTargetWritesBS;
+	ID3D11DepthStencilState* mMarkMirrorDSS;
+	ID3D11DepthStencilState* mDrawReflectionDSS;
+	ID3D11DepthStencilState* mNoDoubleBlendDSS;
 
 	POINT mLastMousePos;
 	
@@ -56,4 +73,6 @@ private:
 	float mTheta;	// Camera의 w벡터(look at 방향 벡터)를 xy평면에 정사영한 벡터 * -1한 벡터와 x축과의 각도 
 	float mPhi;		// Camera의 w벡터와 Global y축과의 각도
 
+	bool mShadow;
+	bool mMirror;
 };
